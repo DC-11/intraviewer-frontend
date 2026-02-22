@@ -84,6 +84,7 @@ export const useMediaStream = (config: MediaStreamConfig = {}) => {
   const frameIntervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const backendSessionIdRef = useRef<number | null>(null);
+  const isFinishingRef = useRef(false);
 
   /**
    * Create backend session via API
@@ -179,8 +180,8 @@ export const useMediaStream = (config: MediaStreamConfig = {}) => {
         console.log('🔌 WebSocket disconnected');
         setStatus((prev) => ({ ...prev, isConnected: false }));
 
-        // Attempt reconnect after 3 seconds if we have a session
-        if (sessionId) {
+        // Attempt reconnect after 3 seconds if we have a session AND aren't finishing
+        if (sessionId && !isFinishingRef.current) {
           reconnectTimeoutRef.current = setTimeout(() => {
             console.log('🔄 Attempting to reconnect...');
             connectWebSocket(sessionId);
@@ -436,6 +437,9 @@ export const useMediaStream = (config: MediaStreamConfig = {}) => {
         videoRef.current = videoElement;
         canvasRef.current = canvasElement;
 
+        // Reset finishing flag
+        isFinishingRef.current = false;
+
         // Step 1.5: Extract media stream from video element
         const stream = videoElement.srcObject as MediaStream;
         if (!stream) {
@@ -492,6 +496,8 @@ export const useMediaStream = (config: MediaStreamConfig = {}) => {
    * Stop recording
    */
   const stopRecording = useCallback(() => {
+    isFinishingRef.current = true; // Set this flag FIRST
+
     // Stop audio recording
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.stop();
@@ -516,6 +522,10 @@ export const useMediaStream = (config: MediaStreamConfig = {}) => {
           total_frames: frameIndexRef.current,
         })
       );
+    }
+
+    if (wsRef.current) {
+      wsRef.current.close();
     }
 
     setStatus((prev) => ({ ...prev, isRecording: false }));

@@ -96,7 +96,12 @@ export default function InterviewSessionPage() {
   const [isCameraOff, setIsCameraOff] = useState(false);
   const [sessionError, setSessionError] = useState<string | null>(null);
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
-  const [hoveredQuestion, setHoveredQuestion] = useState<{ idx: number; text: string; x: number; y: number } | null>(null);
+  const [hoveredQuestion, setHoveredQuestion] = useState<{
+    idx: number;
+    text: string;
+    x: number;
+    y: number;
+  } | null>(null);
 
   // Refs for video, canvas (for frame extraction), and timing
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -162,7 +167,7 @@ export default function InterviewSessionPage() {
 
         // Check if component is still mounted before updating state
         if (!isMounted) {
-          stream.getTracks().forEach(track => track.stop());
+          stream.getTracks().forEach((track) => track.stop());
           return;
         }
 
@@ -276,55 +281,35 @@ export default function InterviewSessionPage() {
    */
   const [isCompleting, setIsCompleting] = useState(false);
 
+  // Inside handleCompleteInterview in page.tsx
   const handleCompleteInterview = async () => {
-    // Prevent double-clicks / re-entrancy
     if (isCompleting) return;
     setIsCompleting(true);
 
-    // Capture session ID FIRST before any state changes
     const sessionIdForRedirect = backendSessionId;
 
     try {
-      if (!sessionIdForRedirect) {
-        setSessionError('No active session to complete');
-        return;
-      }
-
-      // Save final response metadata
       await saveResponseMetadata();
 
-      // Stop media streaming (sends session_complete to backend)
-      try {
-        stopMediaStream();
-      } catch (err) {
-        console.warn('stopMediaStream error (non-fatal):', err);
-      }
+      // 1. Tell the hook we are finishing (so it doesn't try to reconnect)
+      // 2. stopMediaStream() sends the 'session_complete' signal
+      stopMediaStream();
 
-      // Stop all media tracks
+      // 3. Give the backend 1 second to start the AI background tasks
+      // before we change the DB status via HTTP
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // 4. Now tell the DB the session is officially over
+      await completeInterview();
+
       if (localStream) {
         localStream.getTracks().forEach((track) => track.stop());
       }
 
-      // Complete interview in state (sends to backend and clears state)
-      await completeInterview();
-
-      console.log(
-        '🎬 Interview completed - Total chunks:',
-        streamStatus.chunksRecorded,
-        'frames:',
-        streamStatus.framesRecorded
-      );
-      console.log('📊 Session cleared. Redirecting to results:', sessionIdForRedirect);
-
-      // Redirect IMMEDIATELY using the captured ID (state already cleared won't affect this)
-      // Use replace to prevent back-navigation to the cleared session page
       router.replace(`/interview/results/${sessionIdForRedirect}`);
     } catch (err: any) {
-      console.error('❌ Failed to complete interview:', err);
-      setSessionError(err?.message || 'Failed to complete interview');
       setIsCompleting(false);
     }
-    // NOTE: Don't reset isCompleting on success - we're navigating away
   };
 
   /**
@@ -450,7 +435,9 @@ export default function InterviewSessionPage() {
           </div>
 
           {/* Media Status Indicator */}
-          <div className={`flex items-center gap-3 px-4 py-2 backdrop-blur-sm rounded-lg border transition-colors ${mediaConnected ? 'bg-emerald-50/70 border-emerald-400/40' : 'bg-white/60 border-amber-700/20'}`}>
+          <div
+            className={`flex items-center gap-3 px-4 py-2 backdrop-blur-sm rounded-lg border transition-colors ${mediaConnected ? 'bg-emerald-50/70 border-emerald-400/40' : 'bg-white/60 border-amber-700/20'}`}
+          >
             <div
               className={`w-2 h-2 rounded-full ${mediaConnected ? 'animate-pulse' : ''} ${connectionStatusColor}`}
             ></div>
@@ -636,226 +623,244 @@ export default function InterviewSessionPage() {
                   {Math.floor(elapsedTime / 60)}:{String(elapsedTime % 60).padStart(2, '0')}
                 </div>
 
-              {/* Timer Progress Bar - shows progress based on elapsed time */}
-              <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-emerald-500 transition-all duration-300"
-                  style={{ width: `${Math.min((elapsedTime / 300) * 100, 100)}%` }}
-                ></div>
-              </div>
-            </div>
-
-            {/* Progress */}
-            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-6">
-              <h3 className="font-semibold text-black mb-4">Progress</h3>
-
-              {/* Progress Bar */}
-              <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden mb-3">
-                <div
-                  className="h-full bg-emerald-500 transition-all"
-                  style={{ width: `${(questionProgress / totalQuestions) * 100}%` }}
-                ></div>
+                {/* Timer Progress Bar - shows progress based on elapsed time */}
+                <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 transition-all duration-300"
+                    style={{ width: `${Math.min((elapsedTime / 300) * 100, 100)}%` }}
+                  ></div>
+                </div>
               </div>
 
-              <p className="text-stone-600 text-sm mb-4">
-                {questionProgress} / {totalQuestions} questions completed
-              </p>
+              {/* Progress */}
+              <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-6">
+                <h3 className="font-semibold text-black mb-4">Progress</h3>
 
-              {/* Questions List */}
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {currentSession.questions.map((q, idx) => {
-                  const questionText = (q as any).question || (q as any).question_text || '';
-                  return (
-                    <div
-                      key={`question-${idx}`}
-                      className={`
+                {/* Progress Bar */}
+                <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden mb-3">
+                  <div
+                    className="h-full bg-emerald-500 transition-all"
+                    style={{ width: `${(questionProgress / totalQuestions) * 100}%` }}
+                  ></div>
+                </div>
+
+                <p className="text-stone-600 text-sm mb-4">
+                  {questionProgress} / {totalQuestions} questions completed
+                </p>
+
+                {/* Questions List */}
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {currentSession.questions.map((q, idx) => {
+                    const questionText = (q as any).question || (q as any).question_text || '';
+                    return (
+                      <div
+                        key={`question-${idx}`}
+                        className={`
                         p-2 rounded text-sm flex items-center gap-2 transition-all cursor-pointer
                         ${idx === currentQuestionIndex ? 'bg-amber-100/70 text-amber-700' : ''}
                         ${idx < currentQuestionIndex ? 'text-emerald-600 bg-emerald-50/50 hover:bg-emerald-100/70 hover:text-emerald-700' : 'text-stone-500'}
                         ${idx > currentQuestionIndex ? 'text-stone-400' : ''}
                       `}
-                      onMouseEnter={(e) => {
-                        if (idx < currentQuestionIndex) {
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          setHoveredQuestion({ 
-                            idx, 
-                            text: questionText,
-                            x: rect.left,
-                            y: rect.top
-                          });
-                        }
-                      }}
-                      onMouseLeave={() => setHoveredQuestion(null)}
-                    >
-                      {idx < currentQuestionIndex ? (
-                        <CheckCircle className="w-4 h-4" />
-                      ) : (
-                        <div className="w-4 h-4 rounded-full border border-current"></div>
-                      )}
-                      <span className="text-xs">Q{idx + 1}</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Fixed Tooltip for hovered questions */}
-            </div>
-
-            {/* Navigation Buttons */}
-            <div className="space-y-3">
-              {/* Skip Question Button */}
-              {questionProgress < totalQuestions && (
-                <Button onClick={handleNextQuestion} variant="outline" className="w-full">
-                  <SkipForward className="w-4 h-4 mr-2" />
-                  Skip
-                </Button>
-              )}
-
-              {/* Next/Complete Button */}
-              <Button
-                onClick={
-                  questionProgress < totalQuestions ? handleNextQuestion : handleCompleteInterview
-                }
-                disabled={isCompleting}
-                className="w-full bg-amber-700 hover:bg-amber-800 disabled:opacity-70"
-              >
-                {isCompleting ? (
-                  <>
-                    <Loader className="w-4 h-4 mr-2 animate-spin" /> Completing...
-                  </>
-                ) : questionProgress < totalQuestions ? (
-                  <>
-                    Next Question <ChevronRight className="w-4 h-4 ml-2" />
-                  </>
-                ) : (
-                  <>
-                    Complete Interview <CheckCircle className="w-4 h-4 ml-2" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Live Session Feed - Transcripts & Emotions */}
-        <div className="mt-8 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl overflow-hidden border-t-2 border-t-emerald-400/50">
-          {/* Panel header */}
-          <div className="px-6 py-4 border-b border-amber-700/20 flex items-center justify-between bg-emerald-50/20">
-            <h3 className="font-semibold text-black flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${streamStatus.isRecording ? 'bg-emerald-500 animate-pulse' : 'bg-stone-300'}`}></span>
-              Live Session Feed
-            </h3>
-            <div className="flex items-center gap-3 text-xs text-stone-500">
-              <span className="flex items-center gap-1.5">
-                <span className={`w-1.5 h-1.5 rounded-full inline-block ${streamStatus.chunksRecorded > 0 ? 'bg-emerald-500' : 'bg-stone-300'}`}></span>
-                {streamStatus.chunksRecorded} audio chunk{streamStatus.chunksRecorded !== 1 ? 's' : ''}
-              </span>
-              <span className="text-stone-300">·</span>
-              <span>{transcriptions.length} transcript{transcriptions.length !== 1 ? 's' : ''}</span>
-              <span className="text-stone-300">·</span>
-              <span>{liveEmotions.length} emotion read{liveEmotions.length !== 1 ? 's' : ''}</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-5 divide-x divide-amber-700/10">
-            {/* Q&A Transcript Column */}
-            <div className="col-span-3 p-5">
-              <h4 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <span className="w-1 h-3 bg-emerald-500 rounded-full inline-block"></span>
-                Transcripts
-              </h4>
-              <div className="space-y-4 max-h-72 overflow-y-auto pr-1">
-                {Array.from(new Set(transcriptions.map((t) => t.questionNumber)))
-                  .sort((a, b) => a - b)
-                  .map((qNum) => {
-                    const rawQ = currentSession.questions[qNum - 1] as any;
-                    const qLabel = rawQ?.question || rawQ?.question_text || '';
-                    const qChunks = transcriptions.filter((t) => t.questionNumber === qNum);
-                    return (
-                      <div key={qNum}>
-                        <p className="text-xs font-semibold text-amber-700 mb-1.5">
-                          Q{qNum}{qLabel ? `: ${qLabel.slice(0, 70)}${qLabel.length > 70 ? '\u2026' : ''}` : ''}
-                        </p>
-                        <p className="text-sm text-stone-700 leading-relaxed bg-white/60 rounded-lg px-3 py-2 border border-amber-700/10">
-                          {qChunks.map((c) => c.text).join(' ')}
-                        </p>
+                        onMouseEnter={(e) => {
+                          if (idx < currentQuestionIndex) {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setHoveredQuestion({
+                              idx,
+                              text: questionText,
+                              x: rect.left,
+                              y: rect.top,
+                            });
+                          }
+                        }}
+                        onMouseLeave={() => setHoveredQuestion(null)}
+                      >
+                        {idx < currentQuestionIndex ? (
+                          <CheckCircle className="w-4 h-4" />
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border border-current"></div>
+                        )}
+                        <span className="text-xs">Q{idx + 1}</span>
                       </div>
                     );
                   })}
-                {transcriptions.length === 0 && (
-                  <p className="text-stone-400 text-sm italic">Transcriptions will appear here as you speak\u2026</p>
+                </div>
+
+                {/* Fixed Tooltip for hovered questions */}
+              </div>
+
+              {/* Navigation Buttons */}
+              <div className="space-y-3">
+                {/* Skip Question Button */}
+                {questionProgress < totalQuestions && (
+                  <Button onClick={handleNextQuestion} variant="outline" className="w-full">
+                    <SkipForward className="w-4 h-4 mr-2" />
+                    Skip
+                  </Button>
                 )}
+
+                {/* Next/Complete Button */}
+                <Button
+                  onClick={
+                    questionProgress < totalQuestions ? handleNextQuestion : handleCompleteInterview
+                  }
+                  disabled={isCompleting}
+                  className="w-full bg-amber-700 hover:bg-amber-800 disabled:opacity-70"
+                >
+                  {isCompleting ? (
+                    <>
+                      <Loader className="w-4 h-4 mr-2 animate-spin" /> Completing...
+                    </>
+                  ) : questionProgress < totalQuestions ? (
+                    <>
+                      Next Question <ChevronRight className="w-4 h-4 ml-2" />
+                    </>
+                  ) : (
+                    <>
+                      Complete Interview <CheckCircle className="w-4 h-4 ml-2" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Live Session Feed - Transcripts & Emotions */}
+          <div className="mt-8 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl overflow-hidden border-t-2 border-t-emerald-400/50">
+            {/* Panel header */}
+            <div className="px-6 py-4 border-b border-amber-700/20 flex items-center justify-between bg-emerald-50/20">
+              <h3 className="font-semibold text-black flex items-center gap-2">
+                <span
+                  className={`w-2 h-2 rounded-full flex-shrink-0 ${streamStatus.isRecording ? 'bg-emerald-500 animate-pulse' : 'bg-stone-300'}`}
+                ></span>
+                Live Session Feed
+              </h3>
+              <div className="flex items-center gap-3 text-xs text-stone-500">
+                <span className="flex items-center gap-1.5">
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full inline-block ${streamStatus.chunksRecorded > 0 ? 'bg-emerald-500' : 'bg-stone-300'}`}
+                  ></span>
+                  {streamStatus.chunksRecorded} audio chunk
+                  {streamStatus.chunksRecorded !== 1 ? 's' : ''}
+                </span>
+                <span className="text-stone-300">·</span>
+                <span>
+                  {transcriptions.length} transcript{transcriptions.length !== 1 ? 's' : ''}
+                </span>
+                <span className="text-stone-300">·</span>
+                <span>
+                  {liveEmotions.length} emotion read{liveEmotions.length !== 1 ? 's' : ''}
+                </span>
               </div>
             </div>
 
-            {/* Live Emotion Column */}
-            <div className="col-span-2 p-5">
-              <h4 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <span className="w-1 h-3 bg-emerald-500 rounded-full inline-block"></span>
-                Live Emotions
-              </h4>
-              <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
-                {[...liveEmotions].reverse().map((e, i) => {
-                  const score =
-                    typeof e.score === 'number' ? e.score : parseFloat(String(e.score)) || 0;
-                  const pct = Math.min(100, Math.round(score * 100));
-                  const label = e.label.toLowerCase();
-                  const colorClass =
-                    label.includes('happy') || label.includes('joy')
-                      ? 'bg-green-50 text-green-700 border-green-200'
-                      : label.includes('sad') || label.includes('fear')
-                        ? 'bg-blue-50 text-blue-700 border-blue-200'
-                        : label.includes('angry') || label.includes('disgust')
-                          ? 'bg-red-50 text-red-700 border-red-200'
-                          : label.includes('surprise')
-                            ? 'bg-purple-50 text-purple-700 border-purple-200'
-                            : label.includes('neutral')
-                              ? 'bg-stone-50 text-stone-600 border-stone-200'
-                              : 'bg-amber-50 text-amber-700 border-amber-200';
-                  return (
-                    <div
-                      key={i}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs ${colorClass}`}
-                    >
-                      <span className="font-semibold capitalize min-w-[72px]">{e.label}</span>
-                      <div className="flex-1 h-1.5 bg-black/10 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-current rounded-full transition-all duration-300"
-                          style={{ width: `${pct}%` }}
-                        />
+            <div className="grid grid-cols-5 divide-x divide-amber-700/10">
+              {/* Q&A Transcript Column */}
+              <div className="col-span-3 p-5">
+                <h4 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                  <span className="w-1 h-3 bg-emerald-500 rounded-full inline-block"></span>
+                  Transcripts
+                </h4>
+                <div className="space-y-4 max-h-72 overflow-y-auto pr-1">
+                  {Array.from(new Set(transcriptions.map((t) => t.questionNumber)))
+                    .sort((a, b) => a - b)
+                    .map((qNum) => {
+                      const rawQ = currentSession.questions[qNum - 1] as any;
+                      const qLabel = rawQ?.question || rawQ?.question_text || '';
+                      const qChunks = transcriptions.filter((t) => t.questionNumber === qNum);
+                      return (
+                        <div key={qNum}>
+                          <p className="text-xs font-semibold text-amber-700 mb-1.5">
+                            Q{qNum}
+                            {qLabel
+                              ? `: ${qLabel.slice(0, 70)}${qLabel.length > 70 ? '\u2026' : ''}`
+                              : ''}
+                          </p>
+                          <p className="text-sm text-stone-700 leading-relaxed bg-white/60 rounded-lg px-3 py-2 border border-amber-700/10">
+                            {qChunks.map((c) => c.text).join(' ')}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  {transcriptions.length === 0 && (
+                    <p className="text-stone-400 text-sm italic">
+                      Transcriptions will appear here as you speak\u2026
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Live Emotion Column */}
+              <div className="col-span-2 p-5">
+                <h4 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                  <span className="w-1 h-3 bg-emerald-500 rounded-full inline-block"></span>
+                  Live Emotions
+                </h4>
+                <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
+                  {[...liveEmotions].reverse().map((e, i) => {
+                    const score =
+                      typeof e.score === 'number' ? e.score : parseFloat(String(e.score)) || 0;
+                    const pct = Math.min(100, Math.round(score * 100));
+                    const label = e.label.toLowerCase();
+                    const colorClass =
+                      label.includes('happy') || label.includes('joy')
+                        ? 'bg-green-50 text-green-700 border-green-200'
+                        : label.includes('sad') || label.includes('fear')
+                          ? 'bg-blue-50 text-blue-700 border-blue-200'
+                          : label.includes('angry') || label.includes('disgust')
+                            ? 'bg-red-50 text-red-700 border-red-200'
+                            : label.includes('surprise')
+                              ? 'bg-purple-50 text-purple-700 border-purple-200'
+                              : label.includes('neutral')
+                                ? 'bg-stone-50 text-stone-600 border-stone-200'
+                                : 'bg-amber-50 text-amber-700 border-amber-200';
+                    return (
+                      <div
+                        key={i}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs ${colorClass}`}
+                      >
+                        <span className="font-semibold capitalize min-w-[72px]">{e.label}</span>
+                        <div className="flex-1 h-1.5 bg-black/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-current rounded-full transition-all duration-300"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <span className="tabular-nums w-8 text-right">{pct}%</span>
                       </div>
-                      <span className="tabular-nums w-8 text-right">{pct}%</span>
-                    </div>
-                  );
-                })}
-                {liveEmotions.length === 0 && (
-                  <p className="text-stone-400 text-sm italic">Emotion analysis will appear here\u2026</p>
-                )}
+                    );
+                  })}
+                  {liveEmotions.length === 0 && (
+                    <p className="text-stone-400 text-sm italic">
+                      Emotion analysis will appear here\u2026
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Global Question Tooltip - rendered at root level */}
-      {hoveredQuestion && (
-        <div 
-          className="fixed z-[9999] w-72 p-4 bg-white border-2 border-amber-700/40 rounded-xl shadow-2xl pointer-events-none"
-          style={{
-            left: `${Math.max(16, hoveredQuestion.x - 300)}px`,
-            top: `${hoveredQuestion.y}px`,
-          }}
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 bg-amber-700 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs font-bold">{hoveredQuestion.idx + 1}</span>
+        {/* Global Question Tooltip - rendered at root level */}
+        {hoveredQuestion && (
+          <div
+            className="fixed z-[9999] w-72 p-4 bg-white border-2 border-amber-700/40 rounded-xl shadow-2xl pointer-events-none"
+            style={{
+              left: `${Math.max(16, hoveredQuestion.x - 300)}px`,
+              top: `${hoveredQuestion.y}px`,
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-6 h-6 bg-amber-700 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-bold">{hoveredQuestion.idx + 1}</span>
+              </div>
+              <span className="text-sm font-semibold text-amber-700">
+                Question {hoveredQuestion.idx + 1}
+              </span>
+              <CheckCircle className="w-4 h-4 text-green-500 ml-auto" />
             </div>
-            <span className="text-sm font-semibold text-amber-700">Question {hoveredQuestion.idx + 1}</span>
-            <CheckCircle className="w-4 h-4 text-green-500 ml-auto" />
+            <p className="text-stone-700 text-sm leading-relaxed">{hoveredQuestion.text}</p>
           </div>
-          <p className="text-stone-700 text-sm leading-relaxed">{hoveredQuestion.text}</p>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );
