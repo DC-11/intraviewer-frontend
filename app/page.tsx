@@ -22,6 +22,10 @@ import {
   Grid3X3,
   RefreshCw,
   Code,
+  Mic,
+  Eye,
+  Shield,
+  FileText,
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
@@ -32,43 +36,43 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Featured interview types data
+// IntraViewer feature cards
 const featuredInterviews = [
   {
-    name: 'Technical Interview',
-    icon: Code,
-    description: 'Practice coding questions and system design with AI feedback.',
-    stars: '12.5k',
-  },
-  {
-    name: 'Behavioral Interview',
-    icon: MessageSquare,
-    description: 'Master STAR method responses for common behavioral questions.',
-    stars: '8.3k',
-  },
-  {
-    name: 'Case Study',
+    name: 'AI Question Generation',
     icon: Brain,
-    description: 'Sharpen your analytical skills with business case simulations.',
-    stars: '6.7k',
+    bg: '#034732',
+    description: 'Upload your CV and job description. Our local LLM generates 10 personalised questions — 4 Technical, 3 Behavioural, 3 Situational — tailored specifically to your background.',
   },
   {
-    name: 'Product Management',
-    icon: Grid3X3,
-    description: 'Practice product sense, strategy, and execution questions.',
-    stars: '5.2k',
+    name: 'Live Audio Transcription',
+    icon: Mic,
+    bg: '#1a5c44',
+    description: 'Every word you speak is transcribed in real time using Faster-Whisper ASR. Review your exact answers after each session to spot patterns and improve clarity.',
   },
   {
-    name: 'Data Science',
+    name: 'Emotion & Composure Detection',
+    icon: Eye,
+    bg: '#2d6a4f',
+    description: 'Computer vision analyses your video feed frame-by-frame during the session, detecting emotions and body language so you can build confidence under pressure.',
+  },
+  {
+    name: 'Instant Session Results',
     icon: BarChart3,
-    description: 'SQL, ML concepts, and statistical analysis practice.',
-    stars: '9.1k',
+    bg: '#3a7d5c',
+    description: 'The moment your interview ends, full results appear — transcripts, AI scores, emotion analysis, and model answers — all on a single dashboard.',
   },
   {
-    name: 'Leadership',
-    icon: Zap,
-    description: 'Executive presence and strategic thinking assessments.',
-    stars: '4.8k',
+    name: 'Private & Local AI',
+    icon: Shield,
+    bg: '#40916c',
+    description: 'Whisper, Phi-3 Mini, and SmolVLM2 all run locally on the server. Your CV, audio, and video never leave your environment or touch an external API.',
+  },
+  {
+    name: 'Personalised Preparation',
+    icon: FileText,
+    bg: '#52b788',
+    description: 'No generic practice questions. Every session starts from your actual resume and the specific role you are targeting, making every question relevant from the first second.',
   },
 ];
 
@@ -502,7 +506,7 @@ export default function Home() {
       <section ref={featuredSectionRef} className="relative">
         {/* Sticky title pinned at top */}
         <div className="sticky top-0 z-20 pt-20 pb-10 text-center bg-gradient-to-b from-[#e1e1db] via-[#e1e1db]/95 to-[#e1e1db]/0 px-4">
-          <h2 className="text-4xl md:text-5xl font-bold">Featured Interview </h2>
+          <h2 className="text-4xl md:text-5xl font-bold">Everything you get</h2>
         </div>
 
         {/* Stacking cards — each card-track creates scroll height; card-sticky pins + stacks */}
@@ -514,7 +518,7 @@ export default function Home() {
             const offsetX  = offsetXs[idx] ?? (idx % 2 === 0 ? '-4%'  : '4%'  );
             return (
               /* card-track: takes up real scroll height so GSAP trigger fires for each card */
-              <div key={idx} className="card-track" style={{ height: '22vh', minHeight: '150px' }}>
+              <div key={idx} className="card-track" style={{ height: '28vh', minHeight: '150px' }}>
                 <div
                   className="card-sticky"
                   style={{
@@ -529,22 +533,21 @@ export default function Home() {
                 >
                   <Link
                     href="/auth/signup"
-                    className="group flex items-center justify-between bg-white rounded-3xl px-10 py-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                    className="group flex items-center gap-8 rounded-3xl px-10 py-9 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                    style={{ backgroundColor: interview.bg }}
                   >
-                    <div className="flex-1 pr-8">
-                      <h3 className="text-xl font-semibold text-stone-800 mb-3 group-hover:text-amber-700 transition">
+                    {/* Large icon on the left */}
+                    <div className="shrink-0 flex items-center justify-center w-24 h-24 rounded-2xl bg-white/20">
+                      <interview.icon className="w-12 h-12 text-white" strokeWidth={1.5} />
+                    </div>
+                    {/* Content on the right */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-2xl font-semibold text-white mb-3">
                         {interview.name}
                       </h3>
-                      <p className="text-stone-500 text-sm leading-relaxed">
+                      <p className="text-white/80 text-sm leading-relaxed">
                         {interview.description}
                       </p>
-                      <div className="flex items-center gap-2 text-stone-400 text-sm mt-5">
-                        <Star className="w-4 h-4" />
-                        <span>{interview.stars}</span>
-                      </div>
-                    </div>
-                    <div className="shrink-0 p-5 bg-amber-50 rounded-2xl">
-                      <interview.icon className="w-9 h-9 text-amber-700" />
                     </div>
                   </Link>
                 </div>
