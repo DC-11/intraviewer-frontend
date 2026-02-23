@@ -354,7 +354,7 @@ export default function Home() {
   const uniqueCarouselSrcs = ['/login.png', '/interview-2.png', '/interview-3.png', '/interview-1.png', '/signup.png'];
 
   return (
-    <div  className=" px-0 py-0  min-h-screen bg-[#e1e1db] text-black overflow-hidden">
+    <div  className=" px-0 py-0  min-h-screen bg-[#e1e1db] text-black overflow-hidden ">
 
       {/* ── Carousel image preloader ─────────────────────────────────────────────
            Renders all 5 unique images off-screen with priority=true so Next.js

@@ -1,25 +1,3 @@
-/**
- * Live Interview Session Page
- *
- * Main interview practice page where:
- * - Interview questions are displayed one at a time
- * - User responds to each question
- * - Interview progress is tracked
- * - Real-time data streams to backend for analysis
- *
- * Features:
- * - Video preview with media controls
- * - Question display with 90-second timer
- * - Response recording (audio/video)
- * - Progress tracking
- * - Connection status indicator
- * - Mute/camera toggle controls
- * - Navigation between questions
- *
- * TODO:
- * - Connect WebSocket for real-time analysis
- * - Handle connection failures
- */
 
 'use client';
 
@@ -583,27 +561,34 @@ export default function InterviewSessionPage() {
             </div>
 
             {/* Question Display */}
-            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-6">
-              <div className="mb-4">
-                <h2 className="text-lg font-semibold text-stone-600 mb-2">
-                  Question {questionProgress}
-                </h2>
-                <p className="text-3xl font-bold text-black leading-tight">
+            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 border-l-4 border-l-amber-600 rounded-xl p-6 overflow-hidden">
+              <div className="mb-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-700 text-white text-xs font-bold shrink-0">
+                    {questionProgress}
+                  </span>
+                  <h2 className="text-sm font-semibold text-amber-700 uppercase tracking-widest">
+                    Question {questionProgress}
+                    <span className="text-stone-400 normal-case tracking-normal ml-1">
+                      of {totalQuestions}
+                    </span>
+                  </h2>
+                </div>
+                <p className="text-2xl font-semibold text-stone-800 leading-snug tracking-tight">
                   {currentQuestion?.question}
                 </p>
               </div>
 
               {/* Question Metadata */}
-              <div className="flex gap-3 flex-wrap">
-                <span className="px-3 py-1 bg-amber-100/70 text-amber-700 text-sm rounded-full">
+              <div className="flex gap-2 flex-wrap pt-4 border-t border-amber-700/10">
+                <span className="px-3 py-1 bg-amber-100/80 text-amber-800 text-xs font-medium rounded-full border border-amber-300/40 capitalize">
                   {currentQuestion?.category}
                 </span>
                 <span
-                  className={`
-                  px-3 py-1 text-sm rounded-full
-                  ${currentQuestion?.difficulty === 'easy' ? 'bg-green-100 text-green-700' : ''}
-                  ${currentQuestion?.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' : ''}
-                  ${currentQuestion?.difficulty === 'hard' ? 'bg-red-100 text-red-700' : ''}
+                  className={`px-3 py-1 text-xs font-medium rounded-full border capitalize
+                  ${currentQuestion?.difficulty === 'easy' ? 'bg-emerald-50 text-emerald-700 border-emerald-300/40' : ''}
+                  ${currentQuestion?.difficulty === 'medium' ? 'bg-yellow-50 text-yellow-700 border-yellow-300/40' : ''}
+                  ${currentQuestion?.difficulty === 'hard' ? 'bg-red-50 text-red-700 border-red-300/40' : ''}
                 `}
                 >
                   {currentQuestion?.difficulty} difficulty
@@ -725,7 +710,7 @@ export default function InterviewSessionPage() {
           </div>
 
           {/* Live Session Feed - Transcripts & Emotions */}
-          <div className="mt-8 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl overflow-hidden border-t-2 border-t-emerald-400/50">
+          <div className="lg:col-span-3 mt-8 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl overflow-hidden border-t-2 border-t-emerald-400/50">
             {/* Panel header */}
             <div className="px-6 py-4 border-b border-amber-700/20 flex items-center justify-between bg-emerald-50/20">
               <h3 className="font-semibold text-black flex items-center gap-2">
