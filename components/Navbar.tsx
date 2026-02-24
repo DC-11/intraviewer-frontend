@@ -96,8 +96,8 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
    
     if (!isAuthenticated) {
         return (
-            <nav ref={authNavRef} className="fixed top-0.2 left-4 right-4 z-50 bg-white/40 backdrop-blur-md border border-amber-700/30 rounded-xl opacity-0">
-                <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+            <nav ref={authNavRef} className="fixed top-0.2 left-2 right-2 z-50 backdrop-blur-md border border-amber-700/30 rounded-sm opacity-0 bg-sage/50" >
+                <div className="container mx-auto px-5 py-2 flex items-center justify-between">
                     <Link ref={authLogoRef} href="/" className="flex items-center gap-2 opacity-0">
                         <Image
                             src="/intraviewerlogo.png"
@@ -129,8 +129,8 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
     return (
         <>
             {/* Authenticated Navigation */}
-            <nav ref={navRef} className="fixed top-0.2 left-3 right-3 z-40 bg-white/40 backdrop-blur-md border border-amber-700/30 rounded-xl opacity-0">
-                <div className="flex items-center justify-between px-6 py-3">
+            <nav ref={navRef} className="fixed top-0.2 left-3 right-3  z-40 bg-white/40 backdrop-blur-md border border-amber-700/30 rounded-xl opacity-0">
+                <div className="flex items-center justify-between px-6 py-20">
                     {/* Left Section */}
                     <div className="flex items-center gap-4">
                         {/* Hamburger Menu */}

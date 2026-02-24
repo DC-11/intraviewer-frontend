@@ -354,7 +354,7 @@ export default function Home() {
   const uniqueCarouselSrcs = ['/login.png', '/interview-2.png', '/interview-3.png', '/interview-1.png', '/signup.png'];
 
   return (
-    <div  className=" px-0 py-0  min-h-screen bg-[#e1e1db] text-black overflow-hidden ">
+    <div  className=" px-2 py-14 rounded-4xl  min-h-screen bg-[#e1e1db] text-black overflow-hidden">
 
       {/* ── Carousel image preloader ─────────────────────────────────────────────
            Renders all 5 unique images off-screen with priority=true so Next.js
@@ -368,7 +368,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative bg-green-950 min-h-screen flex flex-col items-center justify-center px-0 pt-0">
+      <section ref={heroRef} className="relative bg-green-950 min-h-[50vh] flex flex-col items-center justify-center px-0 pt-0 rounded-sm">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-amber-100/30 via-transparent to-transparent pointer-events-none"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-200/20 rounded-full blur-[120px] pointer-events-none"></div>
@@ -418,13 +418,15 @@ export default function Home() {
 
 
 
-        {/* Scroll indicator */}
+        {/* Scroll indicator 
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
           <div className="w-6 h-10 border-2 border-black/10 rounded-full flex items-start justify-center p-2">
             <div className="w-1 h-2 bg-black/40 rounded-full animate-pulse"></div>
           </div>
         </div>
+         */}
       </section>
+     
 
       {/* Ferris-Wheel Card Carousel
           Layout:
@@ -438,7 +440,7 @@ export default function Home() {
       <section
         ref={fanCarouselRef}
         className="relative overflow-hidden"
-        style={{ height: 480 }}
+        style={{ height: 600 }}
       >
         <div className="absolute inset-0 pointer-events-none" />
 
@@ -478,8 +480,8 @@ export default function Home() {
                 style={{ willChange: 'opacity' }}
               >
                 <div
-                  className="rounded-2xl shadow-2xl overflow-hidden flex flex-col"
-                  style={{ width: 240, height: 240, background: '#111' }}
+                  className="rounded-sm shadow-2xl overflow-hidden flex flex-col"
+                  style={{ width: 240, height: 220, background: '#000' }}
                 >
                   <div className="relative overflow-hidden" style={{ flex: 1 }}>
                     <Image
@@ -503,14 +505,14 @@ export default function Home() {
       </section>
 
       {/* Featured Interview Types — sticky stacking cards */}
-      <section ref={featuredSectionRef} className="relative">
+      <section ref={featuredSectionRef} className="relative ">
         {/* Sticky title pinned at top */}
-        <div className="sticky top-0 z-20 pt-20 pb-10 text-center bg-gradient-to-b from-[#e1e1db] via-[#e1e1db]/95 to-[#e1e1db]/0 px-4">
-          <h2 className="text-4xl md:text-5xl font-bold">Everything you get</h2>
+        <div className="sticky top-0 z-20 pt-20 pb-10 text-center bg-gradient-to-b from-[#757547] via-[#e1e1db]/95 to-[#e1e1db]/0 px-4 align-middle">
+          <h2 className="text-4xl md:text-5xl font-serif bg-fuchsia-300 h-15 inline-block mx-auto ">Everything you get</h2>
         </div>
 
         {/* Stacking cards — each card-track creates scroll height; card-sticky pins + stacks */}
-        <div ref={featuredCardsRef} className="relative">
+        <div ref={featuredCardsRef} className="relative scale-[0.9] ">
           {featuredInterviews.map((interview, idx) => {
             const tilts    = ['-5deg', '4.5deg', '-4deg', '5.5deg', '-4.5deg', '3.5deg'];
             const offsetXs = ['-5%',   '5%',    '-4%',   '6%',     '-4%',     '4%'   ];
@@ -560,7 +562,7 @@ export default function Home() {
       </section>
 
       {/* Try with Your Profile Section */}
-      <section ref={resumeSectionRef} className="py-20 px-4">
+      <section ref={resumeSectionRef} className="py-20 px-30">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -598,7 +600,7 @@ export default function Home() {
       </section>
 
       {/* Read Your Interview Section */}
-      <section ref={aceSectionRef} className="py-20 px-4">
+      <section ref={aceSectionRef} className="py-20 px-30">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -669,7 +671,7 @@ export default function Home() {
       </section>
 
       {/* Talk to Your Practice Section */}
-      <section ref={talkSectionRef} className="py-20 px-4">
+      <section ref={talkSectionRef} className="py-20 px-30">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -719,7 +721,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-32 px-4">
+      <section className="py-32 px-30">
         <div ref={ctaSectionRef} className="container mx-auto max-w-4xl text-center">
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
             Ready to ace your next interview?
@@ -745,7 +747,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-amber-700/20 py-12 px-4">
+      <footer className="border-t border-amber-700/20 py-12 px-30">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
