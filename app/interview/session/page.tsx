@@ -59,8 +59,8 @@ export default function InterviewSessionPage() {
     liveEmotions,
   } = useMediaStream({
     interviewSessionId: backendSessionId || undefined,
-    audioChunkDuration: 10000, // 10 seconds
-    frameInterval: 2000, // 2 seconds
+    audioChunkDuration: 5000, // 10 seconds
+    frameInterval: 4000, // 2 seconds
   });
 
   // Local media stream state (for display and controls)
