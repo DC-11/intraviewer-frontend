@@ -368,17 +368,19 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative bg-green-950 min-h-[50vh] flex flex-col items-center justify-center px-0 pt-0 rounded-sm">
-        {/* Background gradient */}
+      <section ref={heroRef} className="relative bg-[#0b543d] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-0 rounded-sm">
+
+        {/* Background gradient 
         <div className="absolute inset-0 bg-gradient-to-b from-amber-100/30 via-transparent to-transparent pointer-events-none"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-200/20 rounded-full blur-[120px] pointer-events-none"></div>
+        */}
 
         <div className="relative z-10 text-center max-w-5xl mx-auto px-4 text-white">
           {/* Split Title */}
           <div ref={heroTitleRef} className="flex flex-row items-center justify-center gap-3 md:gap-6 mb-8 flex-wrap">
             <span 
               ref={titleLeftRef}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-none opacity-0"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif tracking-tight leading-none opacity-0"
             >
               IntraViewer
             </span>
@@ -390,7 +392,7 @@ export default function Home() {
             </span>
             <span 
               ref={titleRightRef}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-none opacity-0"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif tracking-tight leading-none opacity-0"
             >
               View To Self
             </span>
@@ -400,16 +402,16 @@ export default function Home() {
 
           <p ref={heroSubtitleRef} className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed opacity-0">
             Platform packed with{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-medium">AI-powered</span>
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif">AI-powered</span>
             {' '}&{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-medium">personalized</span>
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif">personalized</span>
             {' '}practice,
             <br className="hidden md:block" />
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-medium mt-2">feedback</span>
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif mt-2">feedback</span>
             ,{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-medium mt-2">analytics</span>
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif mt-2">analytics</span>
             {' '}and interview{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-medium mt-2">mastery</span>
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif mt-2">mastery</span>
           </p>
 
           {/* Search Bar */}

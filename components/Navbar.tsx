@@ -130,7 +130,7 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
         <>
             {/* Authenticated Navigation */}
             <nav ref={navRef} className="fixed top-0.2 left-3 right-3  z-40 bg-white/40 backdrop-blur-md border border-amber-700/30 rounded-xl opacity-0">
-                <div className="flex items-center justify-between px-6 py-20">
+                <div className="flex items-center justify-between px-6 py-2">
                     {/* Left Section */}
                     <div className="flex items-center gap-4">
                         {/* Hamburger Menu */}
@@ -157,7 +157,7 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
                         </Link>
                     </div>
 
-                    {/* Center Section - Search */}
+                    {/* Center Section - Search 
                     <div className="hidden md:flex flex-1 max-w-2xl mx-8">
                         <div className="relative w-full">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black/50 w-4 h-4" />
@@ -167,7 +167,7 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
                                 className="w-full pl-10 pr-4 py-2 border border-amber-700/30 rounded-lg bg-white/50 focus:bg-white/80 focus:outline-none focus:ring-1 focus:ring-amber-600/50 focus:border-amber-600/50 transition-all text-black placeholder-black/40"
                             />
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Right Section */}
                     <div ref={navItemsRef} className="flex items-center gap-3">

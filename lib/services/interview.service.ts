@@ -176,9 +176,13 @@ export class InterviewService {
   }
 
   /**
-   * Get interview results
+   * Trigger AI analysis for a completed session
+   * Calls LLM to evaluate QnA and emotion data, saves results to DB
    */
-  static async getResults(sessionId: string, accessToken?: string): Promise<any> {
+  static async triggerAnalysis(
+    sessionId: number | string,
+    accessToken?: string
+  ): Promise<{ status: string; message: string }> {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
@@ -187,7 +191,110 @@ export class InterviewService {
       headers['Authorization'] = `Bearer ${accessToken}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}/interviews/${sessionId}/results`, {
+    const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/analyze`, {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+    });
+
+    return handleAPIResponse<{ status: string; message: string }>(response);
+  }
+
+  /**
+   * Fetch analysis results (emotion_result + qna_results) for a session
+   */
+  static async fetchAnalysisResult(
+    sessionId: number | string,
+    accessToken?: string
+  ): Promise<{
+    emotion_analysis: {
+      id: number;
+      session_id: number;
+      perception: string;
+      recommendation: string;
+      confidence: string;
+      created_at: string;
+    };
+    qna_results: Array<{
+      id: number;
+      session_id: number;
+      question_id: number;
+      score: number;
+      feedback: string;
+      strength: string;
+      weakness: string;
+      created_at: string;
+    }>;
+  }> {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/analyss/result`, {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+    });
+
+    return handleAPIResponse(response);
+  }
+
+  /**
+   * Fetch session transcript (user spoken answers per question)
+   */
+  static async fetchSessionTranscript(
+    sessionId: number | string,
+    accessToken?: string
+  ): Promise<{
+    transcripts: Array<{
+      response: string;
+      question_id: number;
+    }>;
+  }> {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}/transcript`, {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+    });
+
+    return handleAPIResponse(response);
+  }
+
+  /**
+   * Fetch session questions (question text + difficulty)
+   */
+  static async fetchSessionQuestions(
+    sessionId: number | string,
+    accessToken?: string
+  ): Promise<{
+    questions: Array<{
+      id: number;
+      question_text: string;
+      difficulty_level: string | null;
+      created_at: string;
+    }>;
+  }> {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/sessions/questions/${sessionId}`, {
       method: 'GET',
       headers,
       credentials: 'include',
