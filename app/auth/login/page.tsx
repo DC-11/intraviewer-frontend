@@ -187,7 +187,6 @@ export default function LoginPage() {
                         setErrors({ ...errors, email: '' });
                       }
                     }}
-                    placeholder="your@email.com"
                     className={`
                       w-full pl-9 pr-3 py-2 bg-white/50 border rounded-lg text-sm
                       text-black placeholder-stone-500 transition-all
@@ -255,7 +254,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-amber-700 hover:bg-amber-800 text-white font-medium py-2 rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full hover:bg-amber-700 bg-[#034732] text-white font-medium py-2 rounded-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>

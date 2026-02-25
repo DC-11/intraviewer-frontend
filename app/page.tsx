@@ -47,31 +47,31 @@ const featuredInterviews = [
   {
     name: 'Live Audio Transcription',
     icon: Mic,
-    bg: '#1a5c44',
+    bg: '#034732',
     description: 'Every word you speak is transcribed in real time using Faster-Whisper ASR. Review your exact answers after each session to spot patterns and improve clarity.',
   },
   {
     name: 'Emotion & Composure Detection',
     icon: Eye,
-    bg: '#2d6a4f',
+    bg: '#034732',
     description: 'Computer vision analyses your video feed frame-by-frame during the session, detecting emotions and body language so you can build confidence under pressure.',
   },
   {
     name: 'Instant Session Results',
     icon: BarChart3,
-    bg: '#3a7d5c',
+    bg: '#034732',
     description: 'The moment your interview ends, full results appear — transcripts, AI scores, emotion analysis, and model answers — all on a single dashboard.',
   },
   {
     name: 'Private & Local AI',
     icon: Shield,
-    bg: '#40916c',
+    bg: '#034732',
     description: 'Whisper, Phi-3 Mini, and SmolVLM2 all run locally on the server. Your CV, audio, and video never leave your environment or touch an external API.',
   },
   {
     name: 'Personalised Preparation',
     icon: FileText,
-    bg: '#52b788',
+    bg: '#034732',
     description: 'No generic practice questions. Every session starts from your actual resume and the specific role you are targeting, making every question relevant from the first second.',
   },
 ];
@@ -233,7 +233,7 @@ export default function Home() {
             duration: 0.8,
             scrollTrigger: {
               trigger: featuredSectionRef.current,
-              start: 'top 80%',
+              start: 'top 70%',
               end: 'top top',
               toggleActions: 'play none none reset',
             },
@@ -523,7 +523,7 @@ export default function Home() {
       {/* Featured Interview Types — sticky stacking cards */}
       <section ref={featuredSectionRef} className="relative ">
         {/* Sticky title pinned at top */}
-        <div className="sticky top-0 z-20 pt-16 pb-10 text-center bg-gradient-to-b from-[#e1e1db] via-[#e1e1db]/95 to-transparent px-4">
+        <div className="sticky top-0 z-20 pt-10 pb-5 text-center bg-gradient-to-b from-[#e1e1db] via-[#e1e1db]/95 to-transparent px-4">
           <h2 className="text-4xl md:text-5xl font-serif text-black inline-block mx-auto">Everything you get</h2>
         </div>
 
@@ -573,7 +573,6 @@ export default function Home() {
             );
           })}
           {/* Extra scroll room so last card stays visible */}
-          <div style={{ height: '25vh' }} />
         </div>
       </section>
 
@@ -588,7 +587,7 @@ export default function Home() {
                 resume
               </h2>
               <span className="inline-block px-4 py-1 bg-amber-100/70 rounded-full text-sm text-amber-700 mb-6">
-                Coming Soon
+                Available
               </span>
               
               <p className="text-black text-lg mb-8 leading-relaxed">
@@ -597,7 +596,7 @@ export default function Home() {
               
               <button className="group flex items-center gap-4 bg-amber-700 text-white px-6 py-4 rounded-xl hover:bg-amber-800 transition font-medium">
                 <Sparkles className="w-5 h-5 text-white" />
-                Notify me when available
+                Try it Now
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
               </button>
             </div>

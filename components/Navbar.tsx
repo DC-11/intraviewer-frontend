@@ -111,12 +111,12 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
                     </Link>
                     <div ref={authButtonsRef} className="flex items-center gap-2">
                         <Link href="/auth/login">
-                            <Button variant="ghost" className="text-black bg-brown hover:text-white hover:bg-green-600 rounded-lg">
+                            <Button variant="ghost" className="text-black bg-brown hover:text-white hover:bg-[#034732] rounded-lg">
                                 Login
                             </Button>
                         </Link>
                         <Link href="/auth/signup">
-                            <Button className="bg-cyan-500/90 hover:bg-amber-700 text-white rounded-lg border border-amber-600/50">
+                            <Button className="bg-[#034732] hover:bg-amber-700 text-white rounded-lg border border-amber-600/50 px-3 w-20">
                                 Join
                             </Button>
                         </Link>
@@ -129,7 +129,7 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
     return (
         <>
             {/* Authenticated Navigation */}
-            <nav ref={navRef} className="fixed top-0.2 left-3 right-3  z-40 bg-white/40 backdrop-blur-md border border-amber-700/30 rounded-xl opacity-0">
+            <nav ref={navRef} className="fixed top-0.2 left-2 right-2  z-40 bg-white/30 backdrop-blur-md border border-amber-700/30 rounded-sm opacity-0">
                 <div className="flex items-center justify-between px-6 py-2">
                     {/* Left Section */}
                     <div className="flex items-center gap-4">
