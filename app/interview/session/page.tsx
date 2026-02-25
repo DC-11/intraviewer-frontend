@@ -616,64 +616,64 @@ export default function InterviewSessionPage() {
                   ></div>
                 </div>
               </div>
+            </div>
 
-              {/* Progress */}
-              <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-6">
-                <h3 className="font-semibold text-black mb-4">Progress</h3>
+            {/* Progress */}
+            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-6">
+              <h3 className="font-semibold text-black mb-4">Progress</h3>
 
-                {/* Progress Bar */}
-                <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden mb-3">
-                  <div
-                    className="h-full bg-emerald-500 transition-all"
-                    style={{ width: `${(questionProgress / totalQuestions) * 100}%` }}
-                  ></div>
-                </div>
+              {/* Progress Bar */}
+              <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden mb-3">
+                <div
+                  className="h-full bg-emerald-500 transition-all"
+                  style={{ width: `${(questionProgress / totalQuestions) * 100}%` }}
+                ></div>
+              </div>
 
-                <p className="text-stone-600 text-sm mb-4">
-                  {questionProgress} / {totalQuestions} questions completed
-                </p>
+              <p className="text-stone-600 text-sm mb-4">
+                {questionProgress} / {totalQuestions} questions completed
+              </p>
 
-                {/* Questions List */}
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {currentSession.questions.map((q, idx) => {
-                    const questionText = (q as any).question || (q as any).question_text || '';
-                    return (
-                      <div
-                        key={`question-${idx}`}
-                        className={`
+              {/* Questions List */}
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {currentSession.questions.map((q, idx) => {
+                  const questionText = (q as any).question || (q as any).question_text || '';
+                  return (
+                    <div
+                      key={`question-${idx}`}
+                      className={`
                         p-2 rounded text-sm flex items-center gap-2 transition-all cursor-pointer
                         ${idx === currentQuestionIndex ? 'bg-amber-100/70 text-amber-700' : ''}
                         ${idx < currentQuestionIndex ? 'text-emerald-600 bg-emerald-50/50 hover:bg-emerald-100/70 hover:text-emerald-700' : 'text-stone-500'}
                         ${idx > currentQuestionIndex ? 'text-stone-400' : ''}
                       `}
-                        onMouseEnter={(e) => {
-                          if (idx < currentQuestionIndex) {
-                            const rect = e.currentTarget.getBoundingClientRect();
-                            setHoveredQuestion({
-                              idx,
-                              text: questionText,
-                              x: rect.left,
-                              y: rect.top,
-                            });
-                          }
-                        }}
-                        onMouseLeave={() => setHoveredQuestion(null)}
-                      >
-                        {idx < currentQuestionIndex ? (
-                          <CheckCircle className="w-4 h-4" />
-                        ) : (
-                          <div className="w-4 h-4 rounded-full border border-current"></div>
-                        )}
-                        <span className="text-xs">Q{idx + 1}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Fixed Tooltip for hovered questions */}
+                      onMouseEnter={(e) => {
+                        if (idx < currentQuestionIndex) {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          setHoveredQuestion({
+                            idx,
+                            text: questionText,
+                            x: rect.left,
+                            y: rect.top,
+                          });
+                        }
+                      }}
+                      onMouseLeave={() => setHoveredQuestion(null)}
+                    >
+                      {idx < currentQuestionIndex ? (
+                        <CheckCircle className="w-4 h-4" />
+                      ) : (
+                        <div className="w-4 h-4 rounded-full border border-current"></div>
+                      )}
+                      <span className="text-xs">Q{idx + 1}</span>
+                    </div>
+                  );
+                })}
               </div>
+            </div>
 
-              {/* Navigation Buttons */}
+            {/* Navigation Buttons */}
+            {isInterviewStarted && (
               <div className="space-y-3">
                 {/* Skip Question Button */}
                 {questionProgress < totalQuestions && (
@@ -706,7 +706,7 @@ export default function InterviewSessionPage() {
                   )}
                 </Button>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Live Session Feed - Transcripts & Emotions */}

@@ -372,7 +372,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative bg-[#053828] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-30 rounded-sm pb-10">
+      <section ref={heroRef} className="relative bg-[#053828] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-30 rounded-sm pb-7">
 
         {/* Background gradient 
         <div className="absolute inset-0 bg-gradient-to-b from-amber-100/30 via-transparent to-transparent pointer-events-none"></div>
@@ -421,6 +421,23 @@ export default function Home() {
           {/* Search Bar */}
          
         </div>
+         {/* Center Section - Dashboard Button */}
+                    <div className="hidden md:flex flex-1 justify-center mx-8">
+                        <Link href="/dashboard">
+                            <Button
+                                variant="ghost"
+                                className="group relative   rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-50/60 via-yellow-50/20 to-amber-50/60 hover:from-amber-100/80 hover:via-yellow-100/80 hover:to-amber-100/80 shadow-[0_0_12px_rgba(217,169,56,0.15)] hover:shadow-[0_0_20px_rgba(217,169,56,0.3)] transition-all duration-300"
+                            >
+                                <span className="text-white font-serif mx-0 my-0 tracking-wide group-hover:text-green-800 transition-colors duration-300">TRY NOW </span>
+                                <span className="ml-2 inline-flex items-center text-emerald-600 group-hover:translate-x-1.5 transition-transform duration-300">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M5 12h14" />
+                                        <path d="m12 5 7 7-7 7" />
+                                    </svg>
+                                </span>
+                            </Button>
+                        </Link>
+                    </div> 
 
 
 
@@ -446,7 +463,7 @@ export default function Home() {
       <section
         ref={fanCarouselRef}
         className="relative overflow-hidden bg-[#053828] "
-        style={{ height: 680 }}
+        style={{ height: 640 }}
       >
         {/* Central text — sits inside the hollow of the arc, Osmo-style */}
         <div

@@ -204,7 +204,7 @@ export default function ProfilePage() {
         <div className="max-w-4xl mx-auto p-6 pt-24">
           {/* Header */}
           <div className="bg-white/40 backdrop-blur-sm rounded-xl border border-amber-700/20 mb-8 overflow-hidden">
-            <div className="relative h-40 bg-amber-700/90">
+            <div className="relative h-40 bg-[#145434ee]">
               {/* Decorative pattern */}
               <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
               <div className="absolute top-4 right-4 flex gap-2">
@@ -237,9 +237,11 @@ export default function ProfilePage() {
               </div>
               
               {/* Edit Button */}
-              <div className="absolute top-4 right-4">
+
+                                {/* Refresh Data Button */}
+
+              {/* <div className="absolute top-4 right-4">
                 <div className="flex gap-2">
-                  {/* Refresh Data Button */}
                   <Button
                     onClick={handleRefreshUserData}
                     disabled={isRefreshing}
@@ -289,7 +291,7 @@ export default function ProfilePage() {
                     </Button>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
             
             {/* Profile Info */}
@@ -334,7 +336,7 @@ export default function ProfilePage() {
                   )}
                 </div>
                 
-                {/* Enhanced Quick Stats */}
+                {/* Enhanced Quick Stats 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="text-center p-4 bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl border border-amber-200">
                     <div className="text-2xl font-bold text-amber-700 mb-1">{userStats.interviewsCompleted}</div>
@@ -352,7 +354,8 @@ export default function ProfilePage() {
                     <div className="text-2xl font-bold text-amber-600 mb-1">{userStats.streak}</div>
                     <div className="text-xs text-stone-700 font-medium">Day Streak</div>
                   </div>
-                </div>
+                  
+                </div>*/}
               </div>
             </div>
           </div>
@@ -441,7 +444,7 @@ export default function ProfilePage() {
                       </div>
                     </div>
 
-                    <div className="space-y-4">
+                    {/* <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-stone-700 mb-2">Location</label>
                         {isEditing ? (
@@ -496,7 +499,7 @@ export default function ProfilePage() {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div>

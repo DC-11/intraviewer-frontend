@@ -2,12 +2,11 @@
  * Interview Results and Analysis Page
  *
  * Fetches real data from backend APIs:
- * 1. GET /sessions/{id}/analyze       — triggers LLM analysis (if not done yet)
- * 2. GET /sessions/{id}/analyss/result — emotion_result + qna_results
- * 3. GET /sessions/{id}/transcript     — user's spoken answers
- * 4. GET /sessions/questions/{id}      — question texts + difficulty
+ * 1. GET /sessions/{id}/analyze                        — triggers LLM analysis (if not done yet)
+ * 2. GET /sessions/{id}/analyss/result                 — emotion_result + qna_results
+ * 3. GET /questions/session/{id}/with-answers           — questions + user spoken answers (combined)
  *
- * All four are merged client-side by question_id to build the full report.
+ * All three are merged client-side by question_id to build the full report.
  */
 
 'use client';
@@ -57,6 +56,7 @@ interface QuestionData {
   id: number;
   question_text: string;
   difficulty_level: string | null;
+  recommended_answer: string | null;
 }
 
 interface TranscriptEntry {
@@ -70,6 +70,7 @@ interface QuestionAnalysis {
   question: string;
   difficulty: string;
   userAnswer: string;
+  recommendedAnswer: string;
   score: number;
   feedback: string;
   strengths: string[];
@@ -119,7 +120,7 @@ export default function InterviewResultsPage() {
         setError(null);
 
         // Check sessionStorage cache first to avoid re-fetching on refresh
-        const cacheKey = `interview_results_${sessionId}`;
+        const cacheKey = `interview_results_v3_${sessionId}`;
         const cached = sessionStorage.getItem(cacheKey);
         if (cached) {
           try {
@@ -154,33 +155,41 @@ export default function InterviewResultsPage() {
           analysisResult = await InterviewService.fetchAnalysisResult(sessionId, token);
         }
 
-        // Step 3: Fetch questions and transcripts in parallel
+        // Step 3: Fetch questions with answers in a single API call
         setLoadingStatus('Fetching results...');
-        const [questionsResult, transcriptResult] = await Promise.all([
-          InterviewService.fetchSessionQuestions(sessionId, token),
-          InterviewService.fetchSessionTranscript(sessionId, token),
-        ]);
-        const questionMap = new Map<number, QuestionData>();
-        for (const q of questionsResult.questions) {
-          questionMap.set(q.id, q);
-        }
+        const questionsWithAnswers = await InterviewService.fetchQuestionsWithAnswers(sessionId, token);
 
+        // Build lookup maps from the combined response
+        const questionMap = new Map<number, QuestionData>();
+        const questionByOrder = new Map<number, QuestionData>();
         const transcriptMap = new Map<number, string>();
-        for (const t of transcriptResult.transcripts) {
-          // Multiple transcript chunks may exist per question — concatenate them
-          const existing = transcriptMap.get(t.question_id) || '';
-          transcriptMap.set(t.question_id, existing ? `${existing} ${t.response}` : t.response);
+        const transcriptByOrder = new Map<number, string>();
+        for (const q of questionsWithAnswers.questions) {
+          const qData: QuestionData = {
+            id: q.id,
+            question_text: q.question_text,
+            difficulty_level: q.difficulty_level,
+            recommended_answer: q.recommended_answer,
+          };
+          questionMap.set(q.id, qData);
+          questionByOrder.set(q.order, qData);
+          if (q.user_response) {
+            transcriptMap.set(q.id, q.user_response);
+            transcriptByOrder.set(q.order, q.user_response);
+          }
         }
 
         // Merge per-question data
         const questionAnalysis: QuestionAnalysis[] = analysisResult.qna_results.map(
           (qna: QnaResult, idx: number) => {
-            const qData = questionMap.get(qna.question_id);
+            // Try matching by question_id first, then fallback to order-based lookup
+            const qData = questionMap.get(qna.question_id) || questionByOrder.get(qna.question_id);
             return {
               questionId: String(idx + 1),
               question: qData?.question_text || `Question #${qna.question_id}`,
-              difficulty: qData?.difficulty_level || 'unknown',
-              userAnswer: transcriptMap.get(qna.question_id) || 'No transcript recorded',
+              difficulty: qData?.difficulty_level || '',
+              userAnswer: transcriptMap.get(qna.question_id) || transcriptByOrder.get(qna.question_id) || 'No transcript recorded',
+              recommendedAnswer: qData?.recommended_answer || '',
               score: qna.score,
               feedback: qna.feedback || '',
               strengths: qna.strength
@@ -537,6 +546,19 @@ export default function InterviewResultsPage() {
                         <p className="text-stone-600 text-sm italic">&quot;{qa.userAnswer}&quot;</p>
                       </div>
                     </div>
+
+                    {/* Recommended Answer */}
+                    {qa.recommendedAnswer && (
+                      <div>
+                        <h4 className="text-emerald-700 font-semibold mb-2 flex items-center gap-2">
+                          <Lightbulb className="w-4 h-4" />
+                          Recommended Answer
+                        </h4>
+                        <div className="bg-emerald-50/60 border border-emerald-200/40 rounded-lg p-4">
+                          <p className="text-stone-700 text-sm">{qa.recommendedAnswer}</p>
+                        </div>
+                      </div>
+                    )}
 
                     {/* AI Feedback */}
                     <div>

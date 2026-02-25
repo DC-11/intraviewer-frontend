@@ -244,6 +244,42 @@ export class InterviewService {
   }
 
   /**
+   * Fetch questions with user answers in a single call
+   * Combines question text, difficulty, and user transcript response
+   */
+  static async fetchQuestionsWithAnswers(
+    sessionId: number | string,
+    accessToken?: string
+  ): Promise<{
+    session_id: number;
+    total_questions: number;
+    questions: Array<{
+      id: number;
+      order: number;
+      question_text: string;
+      user_response: string;
+      recommended_answer: string | null;
+      difficulty_level: string | null;
+    }>;
+  }> {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/questions/session/${sessionId}/with-answers`, {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+    });
+
+    return handleAPIResponse(response);
+  }
+
+  /**
    * Fetch session transcript (user spoken answers per question)
    */
   static async fetchSessionTranscript(
