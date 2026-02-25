@@ -12,7 +12,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,8 @@ import {
 import { useInterviewStore } from '@/lib/stores/interviewStore';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { InterviewService } from '@/lib/services/interview.service';
+import html2canvas from 'html2canvas-pro';
+import { jsPDF } from 'jspdf';
 
 /* ------------------------------------------------------------------ */
 /*  Types matching real backend responses                              */
@@ -97,6 +99,11 @@ export default function InterviewResultsPage() {
   const { currentSession } = useInterviewStore();
   const { accessToken } = useAuthStore();
 
+  // Ref for the printable content area
+  const reportRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState('');
+
   // Local state
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -111,26 +118,48 @@ export default function InterviewResultsPage() {
         setIsLoading(true);
         setError(null);
 
-        const token = accessToken || undefined;
-
-        // Step 1: Trigger analysis (LLM scoring) — may already be done; 404 means no data yet
-        setLoadingStatus('Running AI analysis on your responses...');
-        try {
-          await InterviewService.triggerAnalysis(sessionId, token);
-        } catch (triggerErr: any) {
-          // If analysis already exists the backend may 500/conflict — we still try fetching results
-          console.warn('Trigger analysis response:', triggerErr.message);
+        // Check sessionStorage cache first to avoid re-fetching on refresh
+        const cacheKey = `interview_results_${sessionId}`;
+        const cached = sessionStorage.getItem(cacheKey);
+        if (cached) {
+          try {
+            setAnalysisData(JSON.parse(cached));
+            return; // skip all API calls
+          } catch {
+            sessionStorage.removeItem(cacheKey);
+          }
         }
 
-        // Step 2: Fetch results, questions, transcripts in parallel
+        const token = accessToken || undefined;
+
+        // Step 1: Try fetching existing results first — analysis may already be done
+        setLoadingStatus('Checking for existing results...');
+        let analysisResult: any = null;
+        try {
+          analysisResult = await InterviewService.fetchAnalysisResult(sessionId, token);
+        } catch {
+          // No results yet — need to trigger analysis
+        }
+
+        // Step 2: If no results, trigger analysis then fetch results
+        if (!analysisResult || !analysisResult.qna_results?.length) {
+          setLoadingStatus('Running AI analysis on your responses...');
+          try {
+            await InterviewService.triggerAnalysis(sessionId, token);
+          } catch (triggerErr: any) {
+            console.warn('Trigger analysis response:', triggerErr.message);
+          }
+
+          setLoadingStatus('Fetching results...');
+          analysisResult = await InterviewService.fetchAnalysisResult(sessionId, token);
+        }
+
+        // Step 3: Fetch questions and transcripts in parallel
         setLoadingStatus('Fetching results...');
-        const [analysisResult, questionsResult, transcriptResult] = await Promise.all([
-          InterviewService.fetchAnalysisResult(sessionId, token),
+        const [questionsResult, transcriptResult] = await Promise.all([
           InterviewService.fetchSessionQuestions(sessionId, token),
           InterviewService.fetchSessionTranscript(sessionId, token),
         ]);
-
-        // Build lookup maps
         const questionMap = new Map<number, QuestionData>();
         for (const q of questionsResult.questions) {
           questionMap.set(q.id, q);
@@ -189,6 +218,21 @@ export default function InterviewResultsPage() {
           recommendations,
           questionAnalysis,
         });
+
+        // Cache results in sessionStorage so refreshes are instant
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify({
+            overallScore,
+            highestScore,
+            lowestScore,
+            confidenceLevel,
+            emotionPerception: emotionResult.perception || '',
+            recommendations,
+            questionAnalysis,
+          }));
+        } catch {
+          // sessionStorage may be full or unavailable — non-critical
+        }
       } catch (err: any) {
         console.error('Failed to load analysis:', err);
         setError(err.message || 'Failed to load analysis results');
@@ -216,6 +260,71 @@ export default function InterviewResultsPage() {
     if (score >= 70) return 'bg-yellow-500/20 border-yellow-500/30';
     if (score >= 60) return 'bg-orange-500/20 border-orange-500/30';
     return 'bg-red-500/20 border-red-500/30';
+  };
+
+  /* ---- PDF Download ---- */
+  const handleDownloadPDF = async () => {
+    if (!reportRef.current || !analysisData) return;
+
+    setIsDownloading(true);
+    setDownloadProgress('Preparing content...');
+
+    // Temporarily expand all questions so the PDF captures everything
+    const prevExpanded = expandedQuestion;
+
+    // We need to render all expanded — set a special "all" marker
+    setExpandedQuestion('__all__');
+
+    // Wait for React to re-render with all questions expanded
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    try {
+      const element = reportRef.current;
+
+      setDownloadProgress('Capturing content...');
+      const canvas = await html2canvas(element, {
+        scale: 1.5,
+        useCORS: true,
+        backgroundColor: '#e1e1db',
+        logging: false,
+        windowWidth: 1200,
+      });
+
+      setDownloadProgress('Generating PDF...');
+      // Use JPEG with compression to keep file size small
+      const imgData = canvas.toDataURL('image/jpeg', 0.75);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pdfWidth - 20; // 10mm margin each side
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 10; // top margin
+
+      // First page
+      pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight, undefined, 'FAST');
+      heightLeft -= (pdfHeight - 20);
+
+      // Additional pages if content overflows
+      while (heightLeft > 0) {
+        position = -(imgHeight - heightLeft) + 10;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight, undefined, 'FAST');
+        heightLeft -= (pdfHeight - 20);
+      }
+
+      setDownloadProgress('Saving file...');
+      pdf.save(`interview-results-${sessionId}.pdf`);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+    } finally {
+      // Restore previous expanded state
+      setExpandedQuestion(prevExpanded);
+      setIsDownloading(false);
+      setDownloadProgress('');
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -269,13 +378,31 @@ export default function InterviewResultsPage() {
 
   return (
     <div className="min-h-screen bg-[#e1e1db] py-12 px-4 pt-24">
+      {/* PDF Download Modal Overlay */}
+      {isDownloading && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center border border-green-200">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+              <Loader className="w-8 h-8 animate-spin text-green-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Generating PDF</h3>
+            <p className="text-green-600 font-medium mb-3">{downloadProgress}</p>
+            <div className="w-full h-2 bg-green-100 rounded-full overflow-hidden">
+              <div className="h-full bg-green-500 rounded-full animate-pulse" style={{ width: '80%' }}></div>
+            </div>
+            <p className="text-gray-400 text-xs mt-3">Please wait, do not close the page</p>
+          </div>
+        </div>
+      )}
+
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-amber-200/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-72 h-72 bg-amber-200/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative max-w-5xl mx-auto">
+      {/* Printable report content — everything inside this ref goes to PDF */}
+      <div ref={reportRef} className="relative max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">Interview Results</h1>
@@ -372,7 +499,7 @@ export default function InterviewResultsPage() {
                 key={qa.questionId}
                 className={`
                   bg-white/40 backdrop-blur-sm border rounded-xl overflow-hidden transition-all cursor-pointer
-                  ${expandedQuestion === qa.questionId ? 'border-amber-700 bg-white/60' : 'border-amber-700/20 hover:bg-white/60'}
+                  ${(expandedQuestion === '__all__' || expandedQuestion === qa.questionId) ? 'border-amber-700 bg-white/60' : 'border-amber-700/20 hover:bg-white/60'}
                 `}
                 onClick={() => setExpandedQuestion(expandedQuestion === qa.questionId ? null : qa.questionId)}
               >
@@ -398,7 +525,7 @@ export default function InterviewResultsPage() {
                 </div>
 
                 {/* Question Details - Expanded */}
-                {expandedQuestion === qa.questionId && (
+                {(expandedQuestion === '__all__' || expandedQuestion === qa.questionId) && (
                   <div className="px-6 pb-6 border-t border-amber-700/20 space-y-6 pt-4">
                     {/* User's Answer */}
                     <div>
@@ -488,8 +615,11 @@ export default function InterviewResultsPage() {
           </div>
         )}
 
-        {/* ======== Action Buttons ======== */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+      </div>{/* end reportRef */}
+
+        {/* ======== Action Buttons (outside reportRef — not in PDF) ======== */}
+        <div className="relative max-w-5xl mx-auto">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 mt-4">
           <Button
             onClick={() => router.push('/interview/prepare')}
             className="bg-amber-700 hover:bg-amber-800 flex items-center gap-2"
@@ -500,11 +630,16 @@ export default function InterviewResultsPage() {
 
           <Button
             variant="outline"
-            onClick={() => console.log('TODO: Implement PDF download')}
+            onClick={handleDownloadPDF}
+            disabled={isDownloading}
             className="border-amber-700/30 text-amber-700 hover:bg-white/60 flex items-center gap-2"
           >
-            <Download className="w-4 h-4" />
-            Download Report
+            {isDownloading ? (
+              <Loader className="w-4 h-4 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4" />
+            )}
+            {isDownloading ? 'Generating PDF...' : 'Download Report'}
           </Button>
 
           <Button
@@ -524,7 +659,7 @@ export default function InterviewResultsPage() {
             Start a new interview session &rarr;
           </Link>
         </div>
-      </div>
+        </div>
     </div>
   );
 }

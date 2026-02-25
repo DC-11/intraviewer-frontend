@@ -64,22 +64,22 @@ const Drawer = ({ isOpen, onToggle }: DrawerProps) => {
 
       {/* Drawer */}
       <div className={`
-        fixed top-17 left-3 h-[calc(100vh-6rem)] bg-white/40 backdrop-blur-md border border-amber-700/30 rounded-xl z-50 transition-all duration-300 ease-in-out
-        ${isOpen ? 'w-64' : 'w-16'}
+        fixed top-12 left-2 h-[calc(100vh-6rem)] bg-white/40 backdrop-blur-md border border-amber-700/30 rounded-sm z-50 transition-all duration-300 ease-in-out
+        ${isOpen ? 'w-64' : 'w-12'}
         lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
           
           {/* User Profile */}
-          <div className="p-3 border-b border-amber-700/20">
+          <div className={`border-b border-amber-700/20 ${isOpen ? 'p-3' : 'py-3 flex justify-center'}`}>
             {isOpen ? (
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg overflow-hidden">
                   <Image
                     src="/user.webp"
                     alt="User"
-                    width={42}
-                    height={42}
+                    width={20}
+                    height={20}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -93,12 +93,12 @@ const Drawer = ({ isOpen, onToggle }: DrawerProps) => {
                 </div>
               </div>
             ) : (
-              <div className="w-10 h-10 rounded-lg overflow-hidden mx-auto">
+              <div className="w-8 h-8 rounded-lg overflow-hidden">
                 <Image
                   src="/user.webp"
                   alt="User"
-                  width={40}
-                  height={40}
+                  width={20}
+                  height={20}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -143,7 +143,7 @@ const Drawer = ({ isOpen, onToggle }: DrawerProps) => {
             {/* Divider */}
             <div className="my-6 mx-6 border-t border-amber-700/20"></div>
 
-            {/* Secondary Navigation */}
+            {/* Secondary Navigation 
             <div className="px-3">
               {isOpen && (
                 <h3 className="px-3 text-xs font-semibold text-stone-600 uppercase tracking-wider mb-3">
@@ -175,6 +175,7 @@ const Drawer = ({ isOpen, onToggle }: DrawerProps) => {
                 })}
               </nav>
             </div>
+            */}
           </div>
 
           {/* Footer */}

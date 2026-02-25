@@ -358,7 +358,7 @@ export default function Home() {
   const uniqueCarouselSrcs = ['/login.png', '/interview-2.png', '/interview-3.png', '/interview-1.png', '/signup.png'];
 
   return (
-    <div  className=" px-2 py-14 rounded-4xl  min-h-screen bg-[#e1e1db] text-black overflow-hidden">
+    <div  className=" px-2 py-5 rounded-4xl  min-h-screen bg-[#e1e1db] text-black overflow-hidden">
 
       {/* ── Carousel image preloader ─────────────────────────────────────────────
            Renders all 5 unique images off-screen with priority=true so Next.js
@@ -372,7 +372,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative bg-[#053828] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-0 rounded-sm">
+      <section ref={heroRef} className="relative bg-[#053828] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-30 rounded-sm pb-10">
 
         {/* Background gradient 
         <div className="absolute inset-0 bg-gradient-to-b from-amber-100/30 via-transparent to-transparent pointer-events-none"></div>
@@ -445,7 +445,7 @@ export default function Home() {
       */}
       <section
         ref={fanCarouselRef}
-        className="relative overflow-hidden bg-[#053828]"
+        className="relative overflow-hidden bg-[#053828] "
         style={{ height: 680 }}
       >
         {/* Central text — sits inside the hollow of the arc, Osmo-style */}

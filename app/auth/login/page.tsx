@@ -86,7 +86,7 @@ export default function LoginPage() {
 
       // Redirect after a short delay to show success message
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push('/');
       }, 800);
     } catch (err: any) {
       setLoginError(err.message || 'Login failed. Please try again.');

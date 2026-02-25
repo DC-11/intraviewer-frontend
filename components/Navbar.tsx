@@ -97,17 +97,17 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
     if (!isAuthenticated) {
         return (
             <nav ref={authNavRef} className="fixed top-0.2 left-2 right-2 z-50 backdrop-blur-md border border-amber-700/30 rounded-sm opacity-0 bg-white/30" >
-                <div className="container mx-auto px-5 py-2 flex items-center justify-between">
-                    <Link ref={authLogoRef} href="/" className="flex items-center gap-2 opacity-0">
+                <div className="container mx-auto px-6 py-2 flex items-center justify-between">
+                    <Link ref={authLogoRef} href="/" className="flex items-center   gap-2 opacity-0  rounded-sm ">
                         <Image
                             src="/intraviewerlogo.png"
                             alt="IntraViewer Logo"
                             width={32}
                             height={32}
-                            className="w-8 h-8 rounded-lg"
+                            className="w-8 h-8 rounded-sm "
                             priority
                         />
-                        <span className="text-2xl font-bold text-black">IntraViewer</span>
+                        <span className="text-2xl font-serif font-bold text-black hover:text-[#034732] " >IntraViewer</span>
                     </Link>
                     <div ref={authButtonsRef} className="flex items-center gap-2">
                         <Link href="/auth/login">
@@ -129,10 +129,10 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
     return (
         <>
             {/* Authenticated Navigation */}
-            <nav ref={navRef} className="fixed top-0.2 left-2 right-2  z-40 bg-white/30 backdrop-blur-md border border-amber-700/30 rounded-sm opacity-0">
-                <div className="flex items-center justify-between px-6 py-2">
+            <nav ref={navRef} className="fixed top-0.2 left-2 right-2 z-50 backdrop-blur-md border border-amber-700/30 rounded-sm opacity-0 bg-white/30">
+                <div className="flex items-center justify-between pr-6 pl-3 py-2">
                     {/* Left Section */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
                         {/* Hamburger Menu */}
                         <Button
                             variant="ghost"
@@ -140,11 +140,11 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
                             onClick={toggleDrawer}
                             className="p-2 hover:bg-amber-100 rounded-lg"
                         >
-                            <Menu className="w-5 h-5 text-black" />
+                            <Menu className="w-10 h-10 text-black" />
                         </Button>
                         
                         {/* Logo */}
-                        <Link ref={logoRef} href="/" className="flex items-center gap-2 opacity-0">
+                        <Link ref={logoRef} href="/" className="flex items-center gap-2 opacity-0 border-[#034732]">
                             <Image
                                 src="/intraviewerlogo.png"
                                 alt="IntraViewer Logo"
@@ -153,7 +153,7 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
                                 className="w-8 h-8 rounded-lg"
                                 priority
                             />
-                            <span className="font-bold text-black hidden sm:block">IntraViewer</span>
+                            <span className="text-2xl font-serif font-bold text-black hover:text-[#034732] " >IntraViewer</span>
                         </Link>
                     </div>
 
@@ -180,15 +180,7 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
                             <Search className="w-5 h-5 text-black" />
                         </Button>
 
-                        {/* Notifications */}
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="p-2 hover:bg-amber-100 rounded-lg relative"
-                        >
-                            <Bell className="w-5 h-5 text-black" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </Button>
+                     
 
                         {/* User Profile */}
                         <Link href={'./profile'}>
