@@ -96,7 +96,7 @@ const Navbar = ({ onDrawerStateChange }: NavbarProps) => {
    
     if (!isAuthenticated) {
         return (
-            <nav ref={authNavRef} className="fixed top-0.2 left-2 right-2 z-50 backdrop-blur-md border border-amber-700/30 rounded-sm opacity-0 bg-sage/50" >
+            <nav ref={authNavRef} className="fixed top-0.2 left-2 right-2 z-50 backdrop-blur-md border border-amber-700/30 rounded-sm opacity-0 bg-white/30" >
                 <div className="container mx-auto px-5 py-2 flex items-center justify-between">
                     <Link ref={authLogoRef} href="/" className="flex items-center gap-2 opacity-0">
                         <Image

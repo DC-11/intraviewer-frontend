@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Mail, Lock, User, AlertCircle, Loader, Check } from 'lucide-react';
+import { Mail, Lock, User, AlertCircle, Loader, Check,Box } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { RouteGuard } from '@/components/guards/RouteGuard';
 
@@ -170,15 +170,15 @@ export default function SignupPage() {
               </p>
               <div className="flex items-center justify-center gap-6 text-sm text-stone-500">
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-600" />
+                  <Box className="w-4 h-4 text-emerald-600" />
                   <span>AI Feedback</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-600" />
+                  <Box className="w-4 h-4 text-emerald-600" />
                   <span>Unlimited Practice</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-600" />
+                  <Box className="w-4 h-4 text-emerald-600" />
                   <span>Free to Start</span>
                 </div>
               </div>

@@ -1,17 +1,4 @@
-/**
- * Login Page
- * 
- * User authentication page.
- * Allows existing users to sign in with email and password.
- * 
- * Features:
- * - Email validation
- * - Password validation (minimum 6 characters)
- * - Form submission with error handling
- * - Link to signup for new users
- * 
- * TODO: Connect to backend authentication API
- */
+
 
 'use client';
 
@@ -20,17 +7,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Mail, Lock, AlertCircle, Loader, CheckCircle, Check } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Loader, CheckCircle, Check, Box, Square } from 'lucide-react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { RouteGuard } from '@/components/guards/RouteGuard';
+import { Squada_One } from 'next/font/google';
 
-/**
- * Login component
- * 
- * Handles user authentication and redirects to:
- * 1. The page they were trying to access (via 'redirect' query param)
- * 2. Interview preparation page (default)
- */
+
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -120,7 +102,7 @@ export default function LoginPage() {
           {/* Left Side - Image and Text */}
           <div className="hidden lg:flex flex-col items-center justify-start pt-12">
             <Image
-              src="/login.png"
+              src="/signup.png"
               alt="Interview Practice Illustration"
               width={400}
               height={400}
@@ -136,15 +118,15 @@ export default function LoginPage() {
               </p>
               <div className="flex items-center justify-center gap-6 text-sm text-stone-500">
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-600" />
+                  <Box className="w-4 h-4 text-emerald-600" />
                   <span>Track Progress</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-600" />
+                  <Box className="w-4 h-4 text-emerald-600" />
                   <span>View History</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-emerald-600" />
+                  <Box className="w-4 h-4 text-emerald-600" />
                   <span>Get Insights</span>
                 </div>
               </div>

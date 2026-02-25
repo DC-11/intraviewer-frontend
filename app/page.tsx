@@ -78,21 +78,25 @@ const featuredInterviews = [
 
 // Fan carousel card data
 const fanCards = [
-  { src: '/login.png',       label: 'Secure Login',    alt: 'Login screen' },
-  { src: '/interview-2.png', label: 'Mock Sessions',    alt: 'Mock interview' },
-  { src: '/interview-3.png', label: 'AI Feedback',      alt: 'AI feedback' },
+  { src: '/login.png',       label: 'Personalised Questions',    alt: 'Login screen' },
+  { src: '/login.png',       label: 'Secure Registration',    alt: 'Login screen' },
+  { src: '/signup.png',      label: 'Private & Local AI',     alt: 'Sign up screen' },
+  { src: '/interview-3.png', label: 'Analysis & Feedback',      alt: 'AI feedback' },
+  { src: '/emotion.png', label: 'Emotion Analyis',    alt: 'Mock interview' },
+  { src: '/speechtotext.png', label: 'speech To Text',    alt: 'Mock interview' },
   { src: '/interview-1.png', label: 'Voice Practice',   alt: 'Voice practice' },
-  { src: '/signup.png',      label: 'Quick Signup',     alt: 'Sign up screen' },
-  { src: '/login.png',       label: 'Secure Login',    alt: 'Login screen' },
   { src: '/interview-2.png', label: 'Mock Sessions',    alt: 'Mock interview' },
-  { src: '/interview-3.png', label: 'AI Feedback',      alt: 'AI feedback' },
+    { src: '/login.png',       label: 'Personalised Questions',    alt: 'Login screen' },
+  { src: '/login.png',       label: 'Secure Registration',    alt: 'Login screen' },
+  { src: '/signup.png',      label: 'Private & Local AI',     alt: 'Sign up screen' },
+  { src: '/interview-3.png', label: 'Analysis & Feedback',      alt: 'AI feedback' },
+  { src: '/emotion.png', label: 'Emotion Analyis',    alt: 'Mock interview' },
+  { src: '/speechtotext.png', label: 'speech To Text',    alt: 'Mock interview' },
   { src: '/interview-1.png', label: 'Voice Practice',   alt: 'Voice practice' },
-  { src: '/signup.png',      label: 'Quick Signup',     alt: 'Sign up screen' },
-  { src: '/login.png',       label: 'Secure Login',    alt: 'Login screen' },
   { src: '/interview-2.png', label: 'Mock Sessions',    alt: 'Mock interview' },
-  { src: '/interview-3.png', label: 'AI Feedback',      alt: 'AI feedback' },
-  { src: '/interview-1.png', label: 'Voice Practice',   alt: 'Voice practice' },
-  { src: '/signup.png',      label: 'Quick Signup',     alt: 'Sign up screen' },
+
+
+
 ];
 
 // Orbit radius — larger = wider, gentler arc
@@ -368,7 +372,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative bg-[#0b543d] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-0 rounded-sm">
+      <section ref={heroRef} className="relative bg-[#053828] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-0 rounded-sm">
 
         {/* Background gradient 
         <div className="absolute inset-0 bg-gradient-to-b from-amber-100/30 via-transparent to-transparent pointer-events-none"></div>
@@ -441,14 +445,24 @@ export default function Home() {
       */}
       <section
         ref={fanCarouselRef}
-        className="relative overflow-hidden"
-        style={{ height: 600 }}
+        className="relative overflow-hidden bg-[#053828]"
+        style={{ height: 680 }}
       >
-        <div className="absolute inset-0 pointer-events-none" />
+        {/* Central text — sits inside the hollow of the arc, Osmo-style */}
+        <div
+          className="absolute inset-x-0 pointer-events-none z-10 flex flex-col items-center justify-end px-6"
+          style={{ top: 0, bottom: 80 }}
+        >
+          <p className="text-center text-l md:text-xl font-serif text-white/80 max-w-2xl leading-snug">
+            IntraViewer is a complete AI interview
+            <br />
+            platform. Get exclusive access to personalised
+            <br />
+            practice, feedback and mastery tools.
+          </p>
+        </div>
 
-        {/* Ring pivot: true 0×0 point at section-centre / pivot-depth.
-            GSAP spins this with transformOrigin:'0 0' → rotates around its own top-left,
-            which is exactly the orbit centre. Cards are children so they orbit with it. */}
+        {/* Ring pivot */}
         <div
           ref={fanRingRef}
           style={{
@@ -460,11 +474,6 @@ export default function Home() {
           }}
         >
           {fanCards.map((card, i) => (
-            /*
-              Positioning wrapper — NEVER touched by GSAP.
-              transform-origin: 0 0  → rotates around the ring pivot (0,0 of wrapper = pivot).
-              rotate(angle) translateY(-R) translateX(-halfW) places card on circle.
-            */
             <div
               key={i}
               style={{
@@ -475,7 +484,6 @@ export default function Home() {
                 transform: `rotate(${(360 / fanCards.length) * i}deg) translateY(-${ORBIT_R}px) translateX(-120px)`,
               }}
             >
-              {/* Inner card — GSAP fades this; no positioning transform conflict */}
               <div
                 ref={(el) => { if (el) fanCardEls.current[i] = el; }}
                 className="cursor-pointer select-none"
@@ -495,22 +503,28 @@ export default function Home() {
                       loading="eager"
                     />
                   </div>
-                  <div className="px-4 py-2.5 border-t border-white/10" style={{ background: '#111' }}>
+                  <div className="px-4 py-2.5 border-t border-white/10" style={{ background: '#1a1a1a' }}>
                     <p className="text-white text-sm font-medium">{card.label}</p>
-                    <p className="text-white/40 text-xs mt-0.5">Resource</p>
                   </div>
                 </div>
               </div>
             </div>
           ))}
         </div>
+
+        {/* Bottom fade — cards bleed cleanly into the next section 
+        <div
+          className="absolute bottom-0 left-0 right-0 h-36 pointer-events-none z-10"
+          style={{ background: 'linear-gradient(to bottom, transparent, #e1e1db)' }}
+        />
+        */}
       </section>
 
       {/* Featured Interview Types — sticky stacking cards */}
       <section ref={featuredSectionRef} className="relative ">
         {/* Sticky title pinned at top */}
-        <div className="sticky top-0 z-20 pt-20 pb-10 text-center bg-gradient-to-b from-[#757547] via-[#e1e1db]/95 to-[#e1e1db]/0 px-4 align-middle">
-          <h2 className="text-4xl md:text-5xl font-serif bg-fuchsia-300 h-15 inline-block mx-auto ">Everything you get</h2>
+        <div className="sticky top-0 z-20 pt-16 pb-10 text-center bg-gradient-to-b from-[#e1e1db] via-[#e1e1db]/95 to-transparent px-4">
+          <h2 className="text-4xl md:text-5xl font-serif text-black inline-block mx-auto">Everything you get</h2>
         </div>
 
         {/* Stacking cards — each card-track creates scroll height; card-sticky pins + stacks */}
