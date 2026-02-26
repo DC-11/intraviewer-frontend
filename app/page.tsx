@@ -26,10 +26,14 @@ import {
   Eye,
   Shield,
   FileText,
+  Lightbulb,
+  RefreshCcw,
 } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useAuthStore } from '@/lib/stores/authStore';
+import { API_CONFIG } from '@/lib/config/api';
 
 // Register ScrollTrigger plugin
 if (typeof window !== 'undefined') {
@@ -110,6 +114,41 @@ const PIVOT_OFFSET = 40;
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // Tip state
+  const { accessToken } = useAuthStore();
+  const [tip, setTip] = useState<{ topic: string; tip_number: string; tip_text: string } | null>(null);
+  const [tipLoading, setTipLoading] = useState(false);
+  const [tipError, setTipError] = useState<string | null>(null);
+  const [tipShine, setTipShine] = useState(false);
+
+  const fetchRandomTip = useCallback(async () => {
+    setTipLoading(true);
+    setTipError(null);
+    try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+      const res = await fetch(`${API_CONFIG.BASE_URL}/tips/random`, { headers, credentials: 'include' });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Failed to fetch tip' }));
+        throw new Error(err.detail || `Error ${res.status}`);
+      }
+      const data = await res.json();
+      setTip(data);
+      // Trigger shine animation
+      setTipShine(true);
+      setTimeout(() => setTipShine(false), 1200);
+    } catch (e: any) {
+      setTipError(e?.message || 'Could not load tip');
+    } finally {
+      setTipLoading(false);
+    }
+  }, [accessToken]);
+
+  // Fetch first tip on mount (only if authenticated)
+  useEffect(() => {
+    if (accessToken) fetchRandomTip();
+  }, [accessToken, fetchRandomTip]);
 
   // Refs for GSAP animations
   const heroRef = useRef<HTMLDivElement>(null);
@@ -465,18 +504,70 @@ export default function Home() {
         className="relative overflow-hidden bg-[#053828] "
         style={{ height: 640 }}
       >
-        {/* Central text — sits inside the hollow of the arc, Osmo-style */}
+        {/* Central text — clickable tip card */}
         <div
-          className="absolute inset-x-0 pointer-events-none z-10 flex flex-col items-center justify-end px-6"
-          style={{ top: 0, bottom: 80 }}
-        >
-          <p className="text-center text-l md:text-xl font-serif text-white/80 max-w-2xl leading-snug">
-            IntraViewer is a complete AI interview
-            <br />
-            platform. Get exclusive access to personalised
-            <br />
-            practice, feedback and mastery tools.
-          </p>
+          className="absolute inset-x-0 z-10 flex flex-col items-center justify-end px-6"
+          style={{ top: 0, bottom: 80 }}>
+
+          {/* Shine keyframes */}
+          <style>{`
+            @keyframes shine-border {
+              0%   { border-color: rgba(217,169,56,0.15); box-shadow: 0 0 0 0 rgba(217,169,56,0); }
+              30%  { border-color: rgba(217,169,56,0.7);  box-shadow: 0 0 24px 4px rgba(217,169,56,0.25); }
+              100% { border-color: rgba(217,169,56,0.15); box-shadow: 0 0 0 0 rgba(217,169,56,0); }
+            }
+            .tip-shine { animation: shine-border 1.2s ease-out; }
+          `}</style>
+
+          <button
+            onClick={fetchRandomTip}
+            disabled={tipLoading}
+            className={`
+              group pointer-events-auto max-w-lg w-full
+              rounded-xl border border-amber-500/15 bg-white/[0.04] backdrop-blur-md
+              px-5 py-4 cursor-pointer transition-all duration-300
+              hover:bg-white/[0.08] hover:border-amber-500/40 hover:shadow-[0_0_24px_rgba(217,169,56,0.12)]
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50
+              ${tipShine ? 'tip-shine' : ''}
+            `}
+          >
+            {/* Topic badge + refresh hint */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="flex items-center gap-1.5 text-[10px] font-medium tracking-wide uppercase text-amber-400/80">
+                <Lightbulb className="w-3 h-3" />
+                {tip?.topic ? tip.topic.replace(/[^a-zA-Z0-9 &]/g, '').trim().slice(0, 30) : 'Interview Tip'}
+              </span>
+              <span className="flex items-center gap-1 text-[10px] text-white/30 group-hover:text-white/60 transition-colors">
+                <RefreshCcw className={`w-2.5 h-2.5 ${tipLoading ? 'animate-spin' : ''}`} />
+                {!tipLoading && 'New tip'}
+              </span>
+            </div>
+
+            {/* Tip text */}
+            {tipLoading ? (
+              <div className="flex items-center justify-center py-2">
+                <div className="w-5 h-5 rounded-full border-2 border-amber-500/20 border-t-amber-400 animate-spin" />
+              </div>
+            ) : (
+              <p className="text-center text-sm md:text-base font-serif text-white/80 leading-relaxed">
+                {tipError
+                  ? tipError
+                  : tip?.tip_text
+                    ? `"${tip.tip_text}"`
+                    : (
+                      <>
+                        IntraViewer is a complete AI interview
+                        <br />
+                        platform. Get exclusive access to personalised
+                        <br />
+                        practice, feedback and mastery tools.
+                      </>
+                    )
+                }
+              </p>
+            )}
+
+          </button>
         </div>
 
         {/* Ring pivot */}
