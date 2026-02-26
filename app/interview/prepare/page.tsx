@@ -247,7 +247,7 @@ export default function InterviewPreparePage() {
                   cvData.file
                     ? 'bg-emerald-600 text-white'
                     : currentStep === 'upload'
-                      ? 'bg-amber-700 text-white'
+                      ? 'bg-[#034732] text-white'
                       : 'bg-stone-300 text-stone-500'
                 )}
               `}
@@ -275,7 +275,7 @@ export default function InterviewPreparePage() {
                   localJobTitle && localJobDesc
                     ? 'bg-emerald-600 text-white'
                     : currentStep === 'describe'
-                      ? 'bg-amber-700 text-white'
+                      ? 'bg-[#034732] text-white'
                       : 'bg-stone-300 text-stone-500'
                 )}
               `}
@@ -303,7 +303,7 @@ export default function InterviewPreparePage() {
                   interviewQuestions.length > 0
                     ? 'bg-emerald-600 text-white'
                     : currentStep === 'createSession'
-                      ? 'bg-amber-700 text-white'
+                      ? 'bg-[#034732] text-white'
                       : 'bg-stone-300 text-stone-500'
                 )}
               `}
@@ -331,7 +331,7 @@ export default function InterviewPreparePage() {
                   currentStep === 'preview'
                     ? 'bg-emerald-600 text-white'
                     : interviewQuestions.length > 0
-                      ? 'bg-amber-700 text-white'
+                      ? 'bg-[#034732] text-white'
                       : 'bg-stone-300 text-stone-500'
                 )}
               `}
@@ -395,7 +395,7 @@ export default function InterviewPreparePage() {
                 <label htmlFor="file-input">
                   <Button
                     type="button"
-                    className="bg-amber-700 hover:bg-amber-800 text-white"
+                    className="bg-[#034732] hover:bg-[#023325] text-white"
                     onClick={() => document.getElementById('file-input')?.click()}
                   >
                     Select File
@@ -427,7 +427,7 @@ export default function InterviewPreparePage() {
             <div className="flex justify-end">
               <Button
                 onClick={() => setCurrentStep('describe')}
-                className="bg-amber-700 hover:bg-amber-800 shadow-md text-white"
+                className="bg-[#034732] hover:bg-[#023325] shadow-md text-white"
               >
                 Continue <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -499,7 +499,7 @@ export default function InterviewPreparePage() {
               </Button>
               <Button
                 onClick={handleSetUserData}
-                className="bg-amber-700 hover:bg-amber-800 flex items-center gap-2 text-white"
+                className="bg-[#034732] hover:bg-[#023325] flex items-center gap-2 text-white"
               >
                 {isGenerating ? (
                   <>
@@ -535,7 +535,7 @@ export default function InterviewPreparePage() {
               </Button>
               <Button
                 onClick={handleCreateSession}
-                className="bg-amber-700 hover:bg-amber-800 flex items-center gap-2 text-white"
+                className="bg-[#034732] hover:bg-[#023325] flex items-center gap-2 text-white"
               >
               {isGenerating ? (
                   <>
@@ -574,7 +574,7 @@ export default function InterviewPreparePage() {
               </Button>
               <Button
                 onClick={handleStartInterview}
-                className="bg-amber-700 hover:bg-amber-800 flex items-center gap-2 text-white"
+                className="bg-[#034732] hover:bg-[#023325] flex items-center gap-2 text-white"
               >
              Start Interview <ArrowRight className="w-4 h-4" />
               </Button>
@@ -585,7 +585,7 @@ export default function InterviewPreparePage() {
         )}
       </div>
       {/* quote card */}
-      {!isGenerating ? (
+      {isGenerating ? (
       
         <div className="mt-4 flex flex-col items-center justify-center px-4">
   {/* Remove bg-[#053828] from here */}

@@ -52,7 +52,7 @@ export default function InterviewSessionPage() {
     liveEmotions,
   } = useMediaStream({
     interviewSessionId: backendSessionId || undefined,
-    audioChunkDuration: 5000, // 10 seconds
+    audioChunkDuration: 10000, // 10 seconds
     frameInterval: 3000, // 2 seconds
   });
 

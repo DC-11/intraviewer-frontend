@@ -13,6 +13,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import gsap from 'gsap';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -86,6 +87,130 @@ interface AnalysisData {
   emotionPerception: string;
   recommendations: string[];
   questionAnalysis: QuestionAnalysis[];
+}
+
+/* ------------------------------------------------------------------ */
+/*  Analysis Loading Screen                                             */
+/* ------------------------------------------------------------------ */
+
+const ANALYSIS_STEPS = [
+  { icon: '🎙️', label: 'Reading your responses',       sub: 'Parsing audio transcripts…'        },
+  { icon: '🧠', label: 'Running AI analysis',           sub: 'Evaluating answer quality…'        },
+  { icon: '😊', label: 'Analysing facial expressions',  sub: 'Detecting emotional signals…'      },
+  { icon: '📊', label: 'Scoring each question',         sub: 'Calculating performance metrics…'  },
+  { icon: '💡', label: 'Generating recommendations',    sub: 'Tailoring feedback for you…'       },
+  { icon: '✨', label: 'Finalising your report',        sub: 'Almost there…'                     },
+];
+
+function AnalysisLoadingScreen({ status }: { status: string }) {
+  const [stepIndex, setStepIndex] = useState(0);
+  const labelRef  = useRef<HTMLParagraphElement>(null);
+  const subRef    = useRef<HTMLParagraphElement>(null);
+  const iconRef   = useRef<HTMLDivElement>(null);
+  const barRef    = useRef<HTMLDivElement>(null);
+
+  /* Auto-advance steps */
+  useEffect(() => {
+    const id = setInterval(() => {
+      setStepIndex((prev) => (prev < ANALYSIS_STEPS.length - 1 ? prev + 1 : prev));
+    }, 2500);
+    return () => clearInterval(id);
+  }, []);
+
+  /* GSAP animate on step change */
+  useEffect(() => {
+    const els = [labelRef.current, subRef.current, iconRef.current].filter(Boolean);
+    gsap.fromTo(
+      els,
+      { opacity: 0, y: 14 },
+      { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', stagger: 0.07 }
+    );
+
+    /* Progress bar */
+    const pct = ((stepIndex + 1) / ANALYSIS_STEPS.length) * 100;
+    if (barRef.current) {
+      gsap.to(barRef.current, { width: `${pct}%`, duration: 0.6, ease: 'power2.out' });
+    }
+  }, [stepIndex]);
+
+  const step = ANALYSIS_STEPS[stepIndex];
+
+  return (
+    <div className="min-h-screen bg-[#e1e1db] flex items-center justify-center px-4">
+      {/* Decorative background orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#034732]/8 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-amber-400/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
+      <div className="relative w-full max-w-md text-center">
+        {/* Spinning ring + icon */}
+        <div className="relative w-28 h-28 mx-auto mb-8">
+          {/* Outer spinning ring */}
+          <svg className="absolute inset-0 w-full h-full animate-spin" style={{ animationDuration: '2.5s' }} viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#034732" strokeWidth="2.5"
+              strokeDasharray="60 220" strokeLinecap="round" />
+          </svg>
+          {/* Inner slower counter-spin */}
+          <svg className="absolute inset-0 w-full h-full animate-spin" style={{ animationDuration: '4s', animationDirection: 'reverse' }} viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="36" fill="none" stroke="#b45309" strokeWidth="1.5"
+              strokeDasharray="30 200" strokeLinecap="round" opacity="0.5" />
+          </svg>
+          {/* Icon */}
+          <div
+            ref={iconRef}
+            className="absolute inset-0 flex items-center justify-center text-4xl"
+            style={{ filter: 'drop-shadow(0 2px 8px rgba(3,71,50,0.2))' }}
+          >
+            {step.icon}
+          </div>
+        </div>
+
+        {/* Step label */}
+        <p
+          ref={labelRef}
+          className="text-2xl font-semibold text-[#034732] mb-2 font-serif"
+        >
+          {step.label}
+        </p>
+
+        {/* Step sub-label (from GSAP step) */}
+        <p
+          ref={subRef}
+          className="text-stone-500 text-sm mb-1"
+        >
+          {step.sub}
+        </p>
+
+        {/* Real backend status */}
+        <p className="text-stone-400 text-xs mb-8 italic">{status}</p>
+
+        {/* Progress bar */}
+        <div className="w-full h-1.5 bg-stone-200 rounded-full overflow-hidden">
+          <div
+            ref={barRef}
+            className="h-full bg-[#034732] rounded-full"
+            style={{ width: `${((stepIndex + 1) / ANALYSIS_STEPS.length) * 100}%` }}
+          />
+        </div>
+
+        {/* Step dots */}
+        <div className="flex justify-center gap-2 mt-4">
+          {ANALYSIS_STEPS.map((_, i) => (
+            <div
+              key={i}
+              className="rounded-full transition-all duration-500"
+              style={{
+                width:  i === stepIndex ? 20 : 6,
+                height: 6,
+                background: i <= stepIndex ? '#034732' : '#d6d3d1',
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -351,15 +476,7 @@ export default function InterviewResultsPage() {
 
   /* ---- Loading state ---- */
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#e1e1db] flex items-center justify-center pt-24">
-        <div className="text-center">
-          <Loader className="w-12 h-12 animate-spin text-amber-700 mx-auto mb-4" />
-          <p className="text-black text-lg">Analyzing your interview...</p>
-          <p className="text-stone-600 text-sm mt-2">{loadingStatus}</p>
-        </div>
-      </div>
-    );
+    return <AnalysisLoadingScreen status={loadingStatus} />;
   }
 
   /* ---- Error state ---- */
