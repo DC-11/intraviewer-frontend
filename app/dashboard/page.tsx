@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import Image from 'next/image';
 import React, { useEffect, useState, useMemo } from 'react';
 
 export default function DashboardPage() {
@@ -60,70 +61,92 @@ export default function DashboardPage() {
   return (
     <RouteGuard requireAuth={true}>
       <div className="min-h-screen bg-[#e1e1db]">
-        <div className="p-6 pt-24 max-w-5xl mx-auto">
+        <div className="p-6 pt-24 max-w-6xl mx-auto">
 
           {/* Subtle background accent */}
           <div className="fixed inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-32 right-16 w-80 h-80 bg-emerald-300/6 rounded-full blur-3xl"></div>
             <div className="absolute bottom-32 left-16 w-64 h-64 bg-amber-200/8 rounded-full blur-3xl"></div>
           </div>
-          
-          {/* Header */}
-          <div className="mb-10">
-            <h1 className="text-2xl font-semibold text-stone-900">
-              {greeting}, {userName}
-            </h1>
-            <p className="text-stone-600 mt-1">
-              {currentTime.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </p>
-          </div>
 
-          {/* Main Action */}
-          <div className="mb-8">
-            <Link href="/interview/prepare">
-              <div className="bg-amber-700 text-white p-6 rounded-xl hover:bg-amber-800 transition-colors cursor-pointer">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
-                      <Plus className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-medium">New Practice Session</h2>
-                      <p className="text-amber-200 text-sm">Start a mock interview</p>
+          {/* Two-column layout */}
+          <div className="flex flex-col lg:flex-row gap-10 items-start">
+            
+            {/* Left Column - Content */}
+            <div className="flex-1 min-w-0">
+              {/* Header */}
+              <div className="mb-10">
+                <h1 className="text-2xl font-semibold text-stone-900">
+                  {greeting}, {userName}
+                </h1>
+                <p className="text-stone-600 mt-1">
+                  {currentTime.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </p>
+              </div>
+
+              {/* Main Action */}
+              <div className="mb-8">
+                <Link href="/interview/prepare">
+                  <div className="bg-[#034732] text-white p-6 rounded-xl hover:bg-amber-800 transition-colors cursor-pointer">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center">
+                          <Plus className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h2 className="text-lg font-medium">New Practice Session</h2>
+                          <p className="text-amber-200 text-sm">Start a mock interview</p>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-amber-200" />
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-amber-200" />
-                </div>
+                </Link>
               </div>
-            </Link>
+
+              {/* Quick Links */}
+              <div className="grid grid-cols-2 gap-4 mb-10">
+                <Link href="/interview/results">
+                  <div className="bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-amber-700/20 hover:bg-emerald-50/50 hover:border-emerald-400/30 transition-all cursor-pointer group">
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-5 h-5 text-amber-700 group-hover:text-emerald-600 transition-colors" />
+                      <span className="text-stone-700 font-medium">Past Results</span>
+                    </div>
+                  </div>
+                </Link>
+                <Link href="/profile">
+                  <div className="bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-amber-700/20 hover:bg-emerald-50/50 hover:border-emerald-400/30 transition-all cursor-pointer group">
+                    <div className="flex items-center gap-3">
+                      <Briefcase className="w-5 h-5 text-amber-700 group-hover:text-emerald-600 transition-colors" />
+                      <span className="text-stone-700 font-medium">Your Profile</span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+
+            </div>
+
+            {/* Right Column - Image */}
+            <div className="hidden lg:block w-[350px] shrink-0 sticky top-28">
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-amber-700/10">
+                <Image
+                  src="/interview-1.png"
+                  alt="Interview illustration"
+                  width={480}
+                  height={520}
+                  className="w-full h-auto object-cover"
+                  priority
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="grid grid-cols-2 gap-4 mb-10">
-            <Link href="/interview/results">
-              <div className="bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-amber-700/20 hover:bg-emerald-50/50 hover:border-emerald-400/30 transition-all cursor-pointer group">
-                <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-amber-700 group-hover:text-emerald-600 transition-colors" />
-                  <span className="text-stone-700 font-medium">Past Results</span>
-                </div>
-              </div>
-            </Link>
-            <Link href="/profile">
-              <div className="bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-amber-700/20 hover:bg-emerald-50/50 hover:border-emerald-400/30 transition-all cursor-pointer group">
-                <div className="flex items-center gap-3">
-                  <Briefcase className="w-5 h-5 text-amber-700 group-hover:text-emerald-600 transition-colors" />
-                  <span className="text-stone-700 font-medium">Your Profile</span>
-                </div>
-              </div>
-            </Link>
-          </div>
-
-          {/* Recent Sessions */}
-          <div>
+          {/* Recent Sessions - Full Width */}
+          <div className="mt-10">
             <h3 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-4">
               Recent Sessions
             </h3>
@@ -165,7 +188,7 @@ export default function DashboardPage() {
                   Complete your first practice interview to see it here
                 </p>
                 <Link href="/interview/prepare">
-                  <Button variant="outline" size="sm" className="border-amber-700/30 text-amber-700 hover:bg-white/60">
+                  <Button variant="outline" size="sm" className="border-amber-700/30 text-[#034732] hover:bg-white/60">
                     Start your first session
                   </Button>
                 </Link>

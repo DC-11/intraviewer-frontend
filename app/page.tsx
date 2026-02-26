@@ -78,17 +78,17 @@ const featuredInterviews = [
 
 // Fan carousel card data
 const fanCards = [
-  { src: '/login.png',       label: 'Personalised Questions',    alt: 'Login screen' },
-  { src: '/login.png',       label: 'Secure Registration',    alt: 'Login screen' },
-  { src: '/signup.png',      label: 'Private & Local AI',     alt: 'Sign up screen' },
+  { src: '/questions.webp',       label: 'Personalised Questions',    alt: 'Login screen' },
+  { src: '/registration.jpg',       label: 'Secure Registration',    alt: 'Login screen' },
+  { src: '/local.jpg',      label: 'Private & Local AI',     alt: 'Sign up screen' },
   { src: '/interview-3.png', label: 'Analysis & Feedback',      alt: 'AI feedback' },
   { src: '/emotion.png', label: 'Emotion Analyis',    alt: 'Mock interview' },
   { src: '/speechtotext.png', label: 'speech To Text',    alt: 'Mock interview' },
   { src: '/interview-1.png', label: 'Voice Practice',   alt: 'Voice practice' },
   { src: '/interview-2.png', label: 'Mock Sessions',    alt: 'Mock interview' },
-    { src: '/login.png',       label: 'Personalised Questions',    alt: 'Login screen' },
-  { src: '/login.png',       label: 'Secure Registration',    alt: 'Login screen' },
-  { src: '/signup.png',      label: 'Private & Local AI',     alt: 'Sign up screen' },
+    { src: '/questions.webp',       label: 'Personalised Questions',    alt: 'Login screen' },
+  { src: '/registration.jpg',       label: 'Secure Registration',    alt: 'Login screen' },
+  { src: '/local.jpg',      label: 'Private & Local AI',     alt: 'Sign up screen' },
   { src: '/interview-3.png', label: 'Analysis & Feedback',      alt: 'AI feedback' },
   { src: '/emotion.png', label: 'Emotion Analyis',    alt: 'Mock interview' },
   { src: '/speechtotext.png', label: 'speech To Text',    alt: 'Mock interview' },
