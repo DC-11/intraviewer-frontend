@@ -377,11 +377,14 @@ export default function InterviewSessionPage() {
 
   // Get current question - handle both backend (question_text) and frontend (question) formats
   const rawQuestion = currentSession.questions[currentQuestionIndex] as any;
+  // Distribution: Q1-3 behavioral/easy, Q4-6 technical/medium, Q7-10 situational/hard
+  const fallbackCategory = currentQuestionIndex < 3 ? 'behavioral' : currentQuestionIndex < 6 ? 'technical' : 'situational';
+  const fallbackDifficulty = currentQuestionIndex < 3 ? 'easy' : currentQuestionIndex < 6 ? 'medium' : 'hard';
   const currentQuestion = {
     id: rawQuestion?.id,
     question: rawQuestion?.question || rawQuestion?.question_text || '',
-    category: rawQuestion?.category || 'technical',
-    difficulty: rawQuestion?.difficulty || rawQuestion?.difficulty_level?.toLowerCase() || 'medium',
+    category: rawQuestion?.category || fallbackCategory,
+    difficulty: rawQuestion?.difficulty || rawQuestion?.difficulty_level?.toLowerCase() || fallbackDifficulty,
   };
   const questionProgress = currentQuestionIndex + 1;
   const totalQuestions = currentSession.questions.length;

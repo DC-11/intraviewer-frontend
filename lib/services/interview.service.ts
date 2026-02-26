@@ -44,12 +44,29 @@ export class InterviewService {
     console.log('🔍 Raw API response for questions:', data);
 
     // Map backend question format to frontend InterviewQuestion format
-    const mappedQuestions = data.questions.map((q) => ({
-      id: String(q.id),
-      question: q.question_text,
-      category: 'technical' as const, // Default category since backend doesn't have it
-      difficulty: (q.difficulty_level?.toLowerCase() || 'medium') as 'easy' | 'medium' | 'hard',
-    }));
+    // Distribution: Q1-3 behavioral/easy, Q4-6 technical/medium, Q7-10 situational/hard
+    const mappedQuestions = data.questions.map((q, index) => {
+      let category: 'behavioral' | 'technical' | 'situational';
+      let difficulty: 'easy' | 'medium' | 'hard';
+
+      if (index < 3) {
+        category = 'behavioral';
+        difficulty = 'easy';
+      } else if (index < 6) {
+        category = 'technical';
+        difficulty = 'medium';
+      } else {
+        category = 'situational';
+        difficulty = 'hard';
+      }
+
+      return {
+        id: String(q.id),
+        question: q.question_text,
+        category,
+        difficulty,
+      };
+    });
 
     console.log('🔍 Mapped questions:', mappedQuestions);
 

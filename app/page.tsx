@@ -46,7 +46,7 @@ const featuredInterviews = [
     name: 'AI Question Generation',
     icon: Brain,
     bg: '#034732',
-    description: 'Upload your CV and job description. Our local LLM generates 10 personalised questions — 4 Technical, 3 Behavioural, 3 Situational — tailored specifically to your background.',
+    description: 'Upload your CV and job description. Our local LLM generates 10 personalised questions — 3 Behavioural (Easy), 3 Technical (Medium), 4 Situational (Hard) — tailored specifically to your background.',
   },
   {
     name: 'Live Audio Transcription',
