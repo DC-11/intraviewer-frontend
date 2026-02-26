@@ -442,7 +442,7 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative bg-[#053828] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-30 rounded-sm pb-7">
+      <section ref={heroRef} className="relative bg-[#053828] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-30 rounded-sm pb-0">
 
         {/* Background gradient 
         <div className="absolute inset-0 bg-gradient-to-b from-amber-100/30 via-transparent to-transparent pointer-events-none"></div>
@@ -495,7 +495,7 @@ export default function Home() {
               ${tipShine ? 'tip-shine' : ''}
             `}
             style={{ width: tip?.tip_text ? `min(${Math.min(42, 18 + tip.tip_text.length * 0.35)}rem, 90vw)` : '280px' }}
-          >
+            >
             {/* Topic badge + refresh hint */}
             <div className="flex items-center justify-between mb-2">
               <span className="flex items-center gap-1.5 text-[10px] font-medium tracking-wide uppercase text-amber-400/80">
@@ -521,10 +521,11 @@ export default function Home() {
                     : tip?.tip_text
                       ? `"${tip.tip_text}"`
                       : (
-                        <>
-                          The secret of getting ahead is getting started<br />
+                      <>
+                          The secret of getting ahead is getting started
                           Get started with IntraViewer
-                        </>
+                          </>
+                        
                       )
                   }
                 </p>

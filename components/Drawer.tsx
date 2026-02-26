@@ -33,7 +33,7 @@ const Drawer = ({ isOpen, onToggle }: DrawerProps) => {
     { icon: Home, label: 'Dashboard', href: '/dashboard' },
     { icon: PlayCircle, label: 'Interview Practice', href: '/interview/prepare' },
     { icon: Video, label: 'Active Session', href: '/interview/session' },
-    { icon: BarChart3, label: 'Results', href: '/interview/results' },
+    { icon: BarChart3, label: 'Checkout', href: '/checkout' },
   ];
 
   const secondaryNavItems = [
@@ -64,7 +64,7 @@ const Drawer = ({ isOpen, onToggle }: DrawerProps) => {
 
       {/* Drawer */}
       <div className={`
-        fixed top-12 left-2 h-[calc(100vh-6rem)] bg-white/40 backdrop-blur-md border border-amber-700/30 rounded-sm z-50 transition-all duration-300 ease-in-out
+        fixed top-12 left-2 h-[calc(100vh-6rem)] bg-white/10 backdrop-blur-md border border-amber-700/30 rounded-sm z-50 transition-all duration-300 ease-in-out
         ${isOpen ? 'w-64' : 'w-12'}
         lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
