@@ -359,7 +359,7 @@ export default function InterviewSessionPage() {
   const connectionStatusColor = mediaConnected ? 'text-green-500' : 'text-yellow-500';
 
   return (
-    <div className="min-h-screen bg-[#e1e1db] py-4 px-4 pt-20">
+    <div className="min-h-screen bg-[#e1e1db] py-4 px-4 pt-12">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-amber-200/10 rounded-full blur-3xl"></div>
@@ -527,7 +527,7 @@ export default function InterviewSessionPage() {
             </div>
 
             {/* Question Display */}
-            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 border-l-4 border-l-amber-600 rounded-xl p-4 overflow-hidden">
+            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 border-l-4 border-l-amber-600 rounded-xl px-4 py-2 overflow-hidden">
               <div className="mb-3">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-700 text-white text-xs font-bold shrink-0">

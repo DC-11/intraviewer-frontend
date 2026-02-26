@@ -354,9 +354,9 @@ export default function InterviewPreparePage() {
         {currentStep === 'upload' && (
           <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-8">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-black mb-2">Upload Your CV (Optional)</h2>
+              <h2 className="text-2xl font-bold text-black mb-2">Upload Your</h2>
               <p className="text-stone-700">
-                Your CV helps us generate more personalized questions. Supported formats: PDF, Images (JPG, PNG, etc.), DOCX (Max 5MB). You can skip this if you prefer.
+                Supported formats: PDF, Images (JPG, PNG, etc.), DOCX (Max 5MB).
               </p>
             </div>
 
