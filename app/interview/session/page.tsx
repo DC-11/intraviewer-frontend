@@ -59,8 +59,8 @@ export default function InterviewSessionPage() {
     liveEmotions,
   } = useMediaStream({
     interviewSessionId: backendSessionId || undefined,
-    audioChunkDuration: 10000, // 10 seconds
-    frameInterval: 4000, // 2 seconds
+    audioChunkDuration: 5000, // 10 seconds
+    frameInterval: 3000, // 2 seconds
   });
 
   // Local media stream state (for display and controls)
@@ -92,7 +92,7 @@ export default function InterviewSessionPage() {
   // Check if interview session exists and has backend session ID
   useEffect(() => {
     const validateSession = async () => {
-      // Validate session: exists, has backend ID, not completed, and has questions
+      // Validate session: exists, has backend ID, not completed, and has que.
       const isValidSession =
         currentSession &&
         backendSessionId &&
