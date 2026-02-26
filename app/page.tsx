@@ -150,6 +150,36 @@ export default function Home() {
     if (accessToken) fetchRandomTip();
   }, [accessToken, fetchRandomTip]);
 
+  // Auto-rotate tips every 3 seconds with GSAP animation
+  useEffect(() => {
+    if (!accessToken) return;
+    const interval = setInterval(() => {
+      // Animate out
+      if (tipTextRef.current) {
+        gsap.to(tipTextRef.current, {
+          opacity: 0,
+          y: -12,
+          duration: 0.35,
+          ease: 'power2.in',
+          onComplete: () => {
+            fetchRandomTip().then(() => {
+              if (tipTextRef.current) {
+                gsap.fromTo(
+                  tipTextRef.current,
+                  { opacity: 0, y: 12 },
+                  { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
+                );
+              }
+            });
+          },
+        });
+      } else {
+        fetchRandomTip();
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [accessToken, fetchRandomTip]);
+
   // Refs for GSAP animations
   const heroRef = useRef<HTMLDivElement>(null);
   const heroTitleRef = useRef<HTMLDivElement>(null);
@@ -159,6 +189,7 @@ export default function Home() {
   const heroSubtitleRef = useRef<HTMLParagraphElement>(null);
   const heroSearchRef = useRef<HTMLDivElement>(null);
   const heroImageRef = useRef<HTMLDivElement>(null);
+  const tipTextRef = useRef<HTMLDivElement>(null);
   const fanCarouselRef = useRef<HTMLDivElement>(null);
   const fanRingRef = useRef<HTMLDivElement>(null);
   const fanCardEls = useRef<HTMLDivElement[]>([]);
@@ -442,20 +473,64 @@ export default function Home() {
           </div>
           
        
+         {/* Tip card — in hero */}
+          <style>{`
+            @keyframes shine-border {
+              0%   { border-color: rgba(217,169,56,0.15); box-shadow: 0 0 0 0 rgba(217,169,56,0); }
+              30%  { border-color: rgba(217,169,56,0.7);  box-shadow: 0 0 24px 4px rgba(217,169,56,0.25); }
+              100% { border-color: rgba(217,169,56,0.15); box-shadow: 0 0 0 0 rgba(217,169,56,0); }
+            }
+            .tip-shine { animation: shine-border 1.2s ease-out; }
+          `}</style>
 
-          <p ref={heroSubtitleRef} className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed opacity-0">
-            Platform packed with{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif">AI-powered</span>
-            {' '}&{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif">personalized</span>
-            {' '}practice,
-            <br className="hidden md:block" />
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif mt-2">feedback</span>
-            ,{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif mt-2">analytics</span>
-            {' '}and interview{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md font-serif mt-2">mastery</span>
-          </p>
+          <button
+            onClick={fetchRandomTip}
+            disabled={tipLoading}
+            className={`
+              group mx-auto mb-12 h-[120px] min-w-[280px] max-w-2xl
+              rounded-xl border border-amber-500/15 bg-white/[0.04] backdrop-blur-md
+              px-5 py-4 cursor-pointer transition-all duration-500 ease-out
+              hover:bg-white/[0.08] hover:border-amber-500/40 hover:shadow-[0_0_24px_rgba(217,169,56,0.12)]
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50
+              ${tipShine ? 'tip-shine' : ''}
+            `}
+            style={{ width: tip?.tip_text ? `min(${Math.min(42, 18 + tip.tip_text.length * 0.35)}rem, 90vw)` : '280px' }}
+          >
+            {/* Topic badge + refresh hint */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="flex items-center gap-1.5 text-[10px] font-medium tracking-wide uppercase text-amber-400/80">
+                <Lightbulb className="w-3 h-3" />
+                Worth Noting
+              </span>
+              <span className="flex items-center gap-1 text-[10px] text-white/30 group-hover:text-white/60 transition-colors">
+                <RefreshCcw className={`w-2.5 h-2.5 ${tipLoading ? 'animate-spin' : ''}`} />
+                {!tipLoading && 'New tip'}
+              </span>
+            </div>
+
+            {/* Tip text with GSAP animation ref */}
+            <div ref={tipTextRef} className="flex items-center justify-center flex-1 overflow-hidden">
+              {tipLoading ? (
+                <div className="flex items-center justify-center py-2">
+                  <div className="w-5 h-5 rounded-full border-2 border-amber-500/20 border-t-amber-400 animate-spin" />
+                </div>
+              ) : (
+                <p className="text-center text-sm md:text-base font-serif text-white/80 leading-relaxed line-clamp-3">
+                  {tipError
+                    ? tipError
+                    : tip?.tip_text
+                      ? `"${tip.tip_text}"`
+                      : (
+                        <>
+                          The secret of getting ahead is getting started<br />
+                          Get started with IntraViewer
+                        </>
+                      )
+                  }
+                </p>
+              )}
+            </div>
+          </button>
 
           {/* Search Bar */}
          
@@ -504,70 +579,23 @@ export default function Home() {
         className="relative overflow-hidden bg-[#053828] "
         style={{ height: 640 }}
       >
-        {/* Central text — clickable tip card */}
+        {/* Introduction text — sits inside the hollow of the arc */}
         <div
-          className="absolute inset-x-0 z-10 flex flex-col items-center justify-end px-6"
+          className="absolute inset-x-0 pointer-events-none z-10 flex flex-col items-center justify-end px-6"
           style={{ top: 0, bottom: 80 }}>
-
-          {/* Shine keyframes */}
-          <style>{`
-            @keyframes shine-border {
-              0%   { border-color: rgba(217,169,56,0.15); box-shadow: 0 0 0 0 rgba(217,169,56,0); }
-              30%  { border-color: rgba(217,169,56,0.7);  box-shadow: 0 0 24px 4px rgba(217,169,56,0.25); }
-              100% { border-color: rgba(217,169,56,0.15); box-shadow: 0 0 0 0 rgba(217,169,56,0); }
-            }
-            .tip-shine { animation: shine-border 1.2s ease-out; }
-          `}</style>
-
-          <button
-            onClick={fetchRandomTip}
-            disabled={tipLoading}
-            className={`
-              group pointer-events-auto max-w-lg w-full
-              rounded-xl border border-amber-500/15 bg-white/[0.04] backdrop-blur-md
-              px-5 py-4 cursor-pointer transition-all duration-300
-              hover:bg-white/[0.08] hover:border-amber-500/40 hover:shadow-[0_0_24px_rgba(217,169,56,0.12)]
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50
-              ${tipShine ? 'tip-shine' : ''}
-            `}
-          >
-            {/* Topic badge + refresh hint */}
-            <div className="flex items-center justify-between mb-2">
-              <span className="flex items-center gap-1.5 text-[10px] font-medium tracking-wide uppercase text-amber-400/80">
-                <Lightbulb className="w-3 h-3" />
-                {tip?.topic ? tip.topic.replace(/[^a-zA-Z0-9 &]/g, '').trim().slice(0, 30) : 'Interview Tip'}
-              </span>
-              <span className="flex items-center gap-1 text-[10px] text-white/30 group-hover:text-white/60 transition-colors">
-                <RefreshCcw className={`w-2.5 h-2.5 ${tipLoading ? 'animate-spin' : ''}`} />
-                {!tipLoading && 'New tip'}
-              </span>
-            </div>
-
-            {/* Tip text */}
-            {tipLoading ? (
-              <div className="flex items-center justify-center py-2">
-                <div className="w-5 h-5 rounded-full border-2 border-amber-500/20 border-t-amber-400 animate-spin" />
-              </div>
-            ) : (
-              <p className="text-center text-sm md:text-base font-serif text-white/80 leading-relaxed">
-                {tipError
-                  ? tipError
-                  : tip?.tip_text
-                    ? `"${tip.tip_text}"`
-                    : (
-                      <>
-                        IntraViewer is a complete AI interview
-                        <br />
-                        platform. Get exclusive access to personalised
-                        <br />
-                        practice, feedback and mastery tools.
-                      </>
-                    )
-                }
-              </p>
-            )}
-
-          </button>
+          <p ref={heroSubtitleRef} className="text-center text-base md:text-lg font-serif text-white/80 max-w-2xl leading-snug opacity-0">
+            Platform packed with{' '}
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md">AI-powered</span>
+            {' '}&{' '}
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md">personalized</span>
+            {' '}practice,
+            <br className="hidden md:block" />
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md mt-2">feedback</span>
+            ,{' '}
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md mt-2">analytics</span>
+            {' '}and interview{' '}
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md mt-2">mastery</span>
+          </p>
         </div>
 
         {/* Ring pivot */}
