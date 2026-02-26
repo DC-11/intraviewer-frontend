@@ -8,12 +8,24 @@ import {
   FileText,
   ChevronRight,
   Briefcase,
-  Plus
+  Plus,
+  CheckCircle,
+  Loader,
+  BarChart3
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { InterviewService } from '@/lib/services/interview.service';
+
+interface SessionCard {
+  session_id: number;
+  hasResults: boolean;
+  qna_count: number;
+  emotion_perception: string | null;
+  created_at: string | null;
+}
 
 export default function DashboardPage() {
   const { user, refreshAccessToken } = useAuthStore();
@@ -47,14 +59,38 @@ export default function DashboardPage() {
   }, [user, refreshAccessToken]);
 
   // TODO: Replace with actual API data
-  const hasInterviews = false; // Set to true when user has completed interviews
-  const recentInterviews: Array<{
-    id: string;
-    role: string;
-    company: string;
-    date: string;
-    duration: string;
-  }> = [];
+  const [sessions, setSessions] = useState<SessionCard[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
+
+  // Fetch sessions by probing IDs 1-10
+  const fetchSessions = useCallback(async () => {
+    try {
+      setSessionsLoading(true);
+      const accessToken = useAuthStore.getState().accessToken;
+      const results = await InterviewService.fetchSessionsByProbing(accessToken || undefined, 10);
+      setSessions(results);
+    } catch (error) {
+      console.error('Failed to fetch sessions:', error);
+    } finally {
+      setSessionsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchSessions();
+    }
+  }, [user, fetchSessions]);
+
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return 'Unknown date';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
 
   const userName = user?.firstname || user?.email?.split('@')[0] || 'there';
 
@@ -151,28 +187,39 @@ export default function DashboardPage() {
               Recent Sessions
             </h3>
             
-            {hasInterviews && recentInterviews.length > 0 ? (
-              <div className="space-y-2">
-                {recentInterviews.map((interview) => (
-                  <Link key={interview.id} href={`/interview/results/${interview.id}`}>
-                    <div className="bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-amber-700/20 hover:bg-white/60 transition-all cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-amber-100/70 rounded-lg flex items-center justify-center">
-                            <PlayCircle className="w-5 h-5 text-amber-700" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-stone-900">{interview.role}</p>
-                            <p className="text-sm text-stone-500">{interview.company}</p>
-                          </div>
+            {sessionsLoading ? (
+              <div className="bg-white/40 backdrop-blur-sm rounded-xl border border-amber-700/20 p-8 flex items-center justify-center">
+                <Loader className="w-6 h-6 animate-spin text-amber-700" />
+                <span className="ml-3 text-stone-600">Loading sessions...</span>
+              </div>
+            ) : sessions.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {sessions.map((session) => (
+                  <Link key={session.session_id} href={`/interview/results/${session.session_id}`}>
+                    <div className="bg-white/40 backdrop-blur-sm p-5 rounded-xl border border-amber-700/20 hover:bg-white/70 hover:shadow-md transition-all cursor-pointer group">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 bg-emerald-100/80 rounded-lg flex items-center justify-center group-hover:bg-emerald-200/80 transition-colors">
+                          <CheckCircle className="w-5 h-5 text-emerald-600" />
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm text-stone-600">{interview.date}</p>
-                          <div className="flex items-center gap-1 text-xs text-stone-400">
-                            <Clock className="w-3 h-3" />
-                            <span>{interview.duration}</span>
-                          </div>
+                        <div>
+                          <p className="font-semibold text-stone-900">Session #{session.session_id}</p>
+                          <p className="text-xs text-stone-500">{formatDate(session.created_at)}</p>
                         </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-stone-600 mb-2">
+                        <BarChart3 className="w-4 h-4 text-amber-700" />
+                        <span>{session.qna_count} questions evaluated</span>
+                      </div>
+                      {session.emotion_perception && (
+                        <p className="text-xs text-stone-500 line-clamp-2">
+                          {session.emotion_perception}
+                        </p>
+                      )}
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-300">
+                          completed
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-emerald-600 transition-colors" />
                       </div>
                     </div>
                   </Link>

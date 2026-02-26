@@ -361,6 +361,68 @@ export class InterviewService {
   }
 
   /**
+   * Probe session IDs 1..maxId and return basic session info for ones that have results.
+   * Uses the existing /sessions/{id}/analyss/result endpoint.
+   */
+  static async fetchSessionsByProbing(
+    accessToken?: string,
+    maxId: number = 10
+  ): Promise<
+    Array<{
+      session_id: number;
+      hasResults: boolean;
+      qna_count: number;
+      emotion_perception: string | null;
+      created_at: string | null;
+    }>
+  > {
+    const results: Array<{
+      session_id: number;
+      hasResults: boolean;
+      qna_count: number;
+      emotion_perception: string | null;
+      created_at: string | null;
+    }> = [];
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    // Fire all requests in parallel
+    const promises = Array.from({ length: maxId }, (_, i) => {
+      const id = i + 1;
+      return fetch(`${API_BASE_URL}/sessions/${id}/analyss/result`, {
+        method: 'GET',
+        headers,
+        credentials: 'include',
+      })
+        .then(async (res) => {
+          if (!res.ok) return null;
+          const data = await res.json();
+          return {
+            session_id: id,
+            hasResults: true,
+            qna_count: data.qna_results?.length || 0,
+            emotion_perception: data.emotion_analysis?.perception || null,
+            created_at:
+              data.emotion_analysis?.created_at || data.qna_results?.[0]?.created_at || null,
+          };
+        })
+        .catch(() => null);
+    });
+
+    const settled = await Promise.all(promises);
+    for (const item of settled) {
+      if (item) results.push(item);
+    }
+
+    return results;
+  }
+
+  /**
    * Upload CV file
    */
   static async uploadCV(file: File, accessToken?: string): Promise<string> {

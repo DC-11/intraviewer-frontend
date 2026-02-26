@@ -2,70 +2,87 @@
  * Previous Sessions Modal Component
  * 
  * Displays a modal showing previous interview sessions with:
- * - Session details (date, status)
- * - View results button for completed sessions
- * - Continue button for in-progress sessions
+ * - Session cards fetched by probing session IDs
+ * - Click to view results for completed sessions
  * - Create new session button
  */
 
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   Clock, 
   CheckCircle, 
-  PlayCircle, 
   Plus, 
   Calendar,
-  XCircle,
-  Loader
+  Loader,
+  BarChart3,
+  ChevronRight
 } from 'lucide-react';
-import type { InterviewSession } from '@/lib/types';
+import { InterviewService } from '@/lib/services/interview.service';
+import { useAuthStore } from '@/lib/stores/authStore';
+
+interface SessionCard {
+  session_id: number;
+  hasResults: boolean;
+  qna_count: number;
+  emotion_perception: string | null;
+  created_at: string | null;
+}
 
 interface PreviousSessionsModalProps {
-  sessions: InterviewSession[];
-  isLoading: boolean;
+  sessions?: SessionCard[];
+  isLoading?: boolean;
   onCreateNew: () => void;
   onClose?: () => void;
 }
 
 export default function PreviousSessionsModal({
-  sessions,
-  isLoading,
+  sessions: externalSessions,
+  isLoading: externalLoading,
   onCreateNew,
   onClose
 }: PreviousSessionsModalProps) {
   const router = useRouter();
+  const [sessions, setSessions] = useState<SessionCard[]>(externalSessions || []);
+  const [isLoading, setIsLoading] = useState(externalLoading ?? true);
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'in-progress':
-        return <PlayCircle className="w-5 h-5 text-amber-600" />;
-      case 'cancelled':
-        return <XCircle className="w-5 h-5 text-red-500" />;
-      default:
-        return <Clock className="w-5 h-5 text-yellow-500" />;
+  // If no external sessions provided, fetch them ourselves
+  useEffect(() => {
+    if (externalSessions) {
+      setSessions(externalSessions);
+      setIsLoading(false);
+      return;
     }
-  };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-700 border-green-300';
-      case 'in-progress':
-        return 'bg-amber-100 text-amber-700 border-amber-300';
-      case 'cancelled':
-        return 'bg-red-100 text-red-700 border-red-300';
-      default:
-        return 'bg-yellow-100 text-yellow-700 border-yellow-300';
+    const fetchSessions = async () => {
+      try {
+        setIsLoading(true);
+        const accessToken = useAuthStore.getState().accessToken;
+        const results = await InterviewService.fetchSessionsByProbing(accessToken || undefined, 10);
+        setSessions(results);
+      } catch (error) {
+        console.error('Failed to fetch sessions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSessions();
+  }, [externalSessions]);
+
+  // Sync external loading state
+  useEffect(() => {
+    if (externalLoading !== undefined) {
+      setIsLoading(externalLoading);
     }
-  };
+  }, [externalLoading]);
 
-  const formatDate = (date: Date | string) => {
-    const d = new Date(date);
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return 'Unknown date';
+    const d = new Date(dateStr);
     return d.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -82,7 +99,7 @@ export default function PreviousSessionsModal({
         <div className="bg-gradient-to-r from-amber-600 to-amber-700 p-6 text-white">
           <h2 className="text-2xl font-bold mb-2">Your Interview Sessions</h2>
           <p className="text-amber-100">
-            Continue a previous session or start a new interview
+            View results from a previous session or start a new interview
           </p>
         </div>
 
@@ -107,63 +124,53 @@ export default function PreviousSessionsModal({
             <div className="space-y-4">
               {sessions.map((session) => (
                 <div
-                  key={session.id}
-                  className="border border-amber-700/20 rounded-xl p-5 hover:bg-white/70 transition-all bg-white/50"
+                  key={session.session_id}
+                  onClick={() => router.push(`/interview/results/${session.session_id}`)}
+                  className="border border-amber-700/20 rounded-xl p-5 hover:bg-white/70 transition-all bg-white/50 cursor-pointer group"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      {getStatusIcon(session.status)}
+                      <div className="w-10 h-10 bg-emerald-100/80 rounded-lg flex items-center justify-center group-hover:bg-emerald-200/80 transition-colors">
+                        <CheckCircle className="w-5 h-5 text-emerald-600" />
+                      </div>
                       <div>
                         <h3 className="font-semibold text-black">
-                          Interview Session #{session.id}
+                          Interview Session #{session.session_id}
                         </h3>
                         <div className="flex items-center gap-2 text-sm text-stone-600 mt-1">
                           <Calendar className="w-4 h-4" />
-                          {formatDate(session.createdAt)}
+                          {formatDate(session.created_at)}
                         </div>
                       </div>
                     </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                        session.status
-                      )}`}
-                    >
-                      {session.status}
+                    <span className="px-3 py-1 rounded-full text-xs font-medium border bg-green-100 text-green-700 border-green-300">
+                      completed
                     </span>
                   </div>
 
-                  {session.jobDescription && (
-                    <p className="text-sm text-stone-700 mb-3 line-clamp-2">
-                      {session.jobDescription}
+                  <div className="flex items-center gap-2 text-sm text-stone-600 mb-2">
+                    <BarChart3 className="w-4 h-4 text-amber-700" />
+                    <span>{session.qna_count} questions evaluated</span>
+                  </div>
+
+                  {session.emotion_perception && (
+                    <p className="text-sm text-stone-500 line-clamp-2 mb-3">
+                      {session.emotion_perception}
                     </p>
                   )}
 
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-stone-600">
-                      {session.questions?.length || 0} questions •{' '}
-                      {session.responses?.length || 0} answered
-                    </span>
-
-                    {session.status === 'completed' && session.completedAt && (
-                      <Button
-                        size="sm"
-                        onClick={() => router.push(`/interview/results/${session.id}`)}
-                        className="bg-amber-700 hover:bg-amber-800"
-                      >
-                        View Results
-                      </Button>
-                    )}
-
-                    {session.status === 'in-progress' && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => router.push('/interview/session')}
-                        className="border-amber-700 text-amber-700 hover:bg-amber-50"
-                      >
-                        Continue
-                      </Button>
-                    )}
+                  <div className="flex items-center justify-end">
+                    <Button
+                      size="sm"
+                      className="bg-amber-700 hover:bg-amber-800"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/interview/results/${session.session_id}`);
+                      }}
+                    >
+                      View Results
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
                   </div>
                 </div>
               ))}
