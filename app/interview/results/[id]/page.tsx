@@ -644,7 +644,7 @@ export default function InterviewResultsPage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 mt-4">
           <Button
             onClick={() => router.push('/interview/prepare')}
-            className="bg-amber-700 hover:bg-amber-800 flex items-center gap-2"
+            className="bg-[#034732] hover:bg-[#023325] text-white flex items-center gap-2"
           >
             <RotateCcw className="w-4 h-4" />
             Retake Interview
@@ -654,7 +654,7 @@ export default function InterviewResultsPage() {
             variant="outline"
             onClick={handleDownloadPDF}
             disabled={isDownloading}
-            className="border-amber-700/30 text-amber-700 hover:bg-white/60 flex items-center gap-2"
+            className="border-[#034732]/30 text-[#034732] hover:bg-white/60 flex items-center gap-2"
           >
             {isDownloading ? (
               <Loader className="w-4 h-4 animate-spin" />
@@ -667,7 +667,7 @@ export default function InterviewResultsPage() {
           <Button
             variant="outline"
             onClick={() => console.log('TODO: Implement share functionality')}
-            className="border-amber-700/30 text-amber-700 hover:bg-white/60 flex items-center gap-2"
+            className="border-[#034732]/30 text-[#034732] hover:bg-white/60 flex items-center gap-2"
           >
             <Share2 className="w-4 h-4" />
             Share Results
@@ -677,7 +677,7 @@ export default function InterviewResultsPage() {
         {/* Footer Link */}
         <div className="text-center text-stone-500">
           <p className="mb-4">Want to practice more?</p>
-          <Link href="/interview/prepare" className="text-amber-700 hover:text-amber-800 font-semibold">
+          <Link href="/interview/prepare" className="text-[#034732] hover:text-[#023325] font-semibold">
             Start a new interview session &rarr;
           </Link>
         </div>
