@@ -368,8 +368,6 @@ export default function InterviewSessionPage() {
 
         {/* Previous Sessions Modal */}
         <PreviousSessionsModal
-          sessions={previousSessions}
-          isLoading={isLoadingSessions}
           onCreateNew={handleCreateNewSession}
           onClose={handleCloseModal}
         />

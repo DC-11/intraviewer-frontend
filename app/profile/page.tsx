@@ -35,6 +35,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ChangePasswordModal from '@/components/ChangePasswordModal';
 
 export default function ProfilePage() {
   const { user, setUser, isAuthenticated, fetchUserData } = useAuthStore();
@@ -42,6 +43,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('personal');
   const [mounted, setMounted] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   // Initialize mounted state
   useEffect(() => {
@@ -443,6 +445,16 @@ export default function ProfilePage() {
                         )}
                       </div>
                     </div>
+                     <div className="flex items-center justify-between p-4 bg-white/50 rounded-lg border border-amber-700/20 hover:bg-white/70 transition-colors h-12">
+                      <div className="flex items-center gap-3">
+                        <Key className="w-5 h-5 text-stone-600" />
+                        <div>
+                          <h4 className="font-medium text-black">Password</h4>
+                          
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm" className="border-amber-700/30 text-black" onClick={() => setIsPasswordModalOpen(true)}>Change Password</Button>
+                    </div>
 
                     {/* <div className="space-y-4">
                       <div>
@@ -620,16 +632,7 @@ export default function ProfilePage() {
               {activeTab === 'security' && (
                 <div className="space-y-6">
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-white/50 rounded-lg border border-amber-700/20 hover:bg-white/70 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <Key className="w-5 h-5 text-stone-600" />
-                        <div>
-                          <h4 className="font-medium text-black">Password</h4>
-                          <p className="text-sm text-stone-600">Last changed 2 months ago</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm" className="border-amber-700/30 text-black">Change Password</Button>
-                    </div>
+                   
 
                     <div className="flex items-center justify-between p-4 bg-white/50 rounded-lg border border-amber-700/20 hover:bg-white/70 transition-colors">
                       <div className="flex items-center gap-3">
@@ -755,6 +758,11 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+      />
     </RouteGuard>
   );
 }

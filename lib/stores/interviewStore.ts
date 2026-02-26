@@ -332,8 +332,24 @@ export const useInterviewStore = create<InterviewStore>()(
       fetchPreviousSessions: async () => {
         set({ isGenerating: true, error: null });
         try {
-          const sessions = await InterviewService.fetchSessions();
-          set({ previousSessions: sessions });
+          const accessToken = useAuthStore.getState().accessToken;
+          const probed = await InterviewService.fetchSessionsByProbing(
+            accessToken || undefined,
+            10
+          );
+          // Map probed results to InterviewSession shape for compatibility
+          const sessions = probed.map((s) => ({
+            id: s.session_id,
+            jobDescription: '',
+            questions: [],
+            responses: [],
+            status: 'completed' as const,
+            createdAt: s.created_at ? new Date(s.created_at) : new Date(),
+            completedAt: s.created_at ? new Date(s.created_at) : undefined,
+            qna_count: s.qna_count,
+            emotion_perception: s.emotion_perception,
+          }));
+          set({ previousSessions: sessions as any });
         } catch (err: any) {
           console.error('Failed to fetch previous sessions:', err);
           set({ previousSessions: [] });

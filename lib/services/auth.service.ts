@@ -78,6 +78,31 @@ export class AuthService {
   }
 
   /**
+   * Change user password
+   */
+  static async changePassword(
+    accessToken: string,
+    data: {
+      email: string;
+      old_password: string;
+      new_password: string;
+      new_password_confirm: string;
+    }
+  ): Promise<{ message: string }> {
+    const response = await fetch(`${API_BASE_URL}/users/me/password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      credentials: 'include',
+      body: JSON.stringify(data),
+    });
+
+    return handleAPIResponse<{ message: string }>(response);
+  }
+
+  /**
    * Fetch current user data
    */
   static async getCurrentUser(accessToken: string): Promise<any> {
