@@ -395,7 +395,7 @@ export default function InterviewSessionPage() {
   const connectionStatusColor = mediaConnected ? 'text-green-500' : 'text-yellow-500';
 
   return (
-    <div className="min-h-screen bg-[#e1e1db] py-8 px-4 pt-24">
+    <div className="min-h-screen bg-[#e1e1db] py-4 px-4 pt-20">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-amber-200/10 rounded-full blur-3xl"></div>
@@ -405,10 +405,10 @@ export default function InterviewSessionPage() {
 
       <div className="relative max-w-5xl mx-auto">
         {/* Header with Media Status */}
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-4 flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-black mb-2">Interview Session</h1>
-            <p className="text-stone-600">
+            <h1 className="text-2xl font-bold text-black mb-1">Interview Session</h1>
+            <p className="text-stone-600 text-sm">
               Question {questionProgress} of {totalQuestions}
             </p>
           </div>
@@ -438,13 +438,13 @@ export default function InterviewSessionPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Left Column: Video and Controls */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4">
             {/* Video Feed Container */}
-            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-6 overflow-hidden">
+            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-4 overflow-hidden">
               {/* Video Preview */}
-              <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden mb-6">
+              <div className="relative w-full bg-black rounded-lg overflow-hidden mb-4" style={{ height: '45vh', maxHeight: '400px' }}>
                 <video
                   ref={videoRef}
                   autoPlay
@@ -456,14 +456,14 @@ export default function InterviewSessionPage() {
                 {/* Start Interview overlay */}
                 {!isInterviewStarted && !showSessionsModal && localStream && (
                   <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center">
-                    <div className="bg-white/10 p-6 rounded-xl backdrop-blur-md border border-white/20 text-center max-w-sm mx-4">
-                      <div className="w-16 h-16 bg-amber-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Play className="w-8 h-8 text-white ml-1" />
+                    <div className="bg-white/10 p-4 rounded-xl backdrop-blur-md border border-white/20 text-center max-w-sm mx-4">
+                      <div className="w-12 h-12 bg-amber-700 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Play className="w-6 h-6 text-white ml-0.5" />
                       </div>
-                      <h3 className="text-xl font-bold text-white mb-2">
-                        Ready to specific start?
+                      <h3 className="text-lg font-bold text-white mb-1">
+                        Ready to start?
                       </h3>
-                      <p className="text-slate-200 mb-6 text-sm">
+                      <p className="text-slate-200 mb-4 text-sm">
                         Your camera and microphone are ready. Click below to begin the interview
                         session.
                       </p>
@@ -501,7 +501,7 @@ export default function InterviewSessionPage() {
               </div>
 
               {/* Media Controls */}
-              <div className="flex gap-4 justify-center">
+              <div className="flex gap-3 justify-center">
                 {/* Microphone Toggle */}
                 <Button
                   onClick={toggleMicrophone}
@@ -562,10 +562,10 @@ export default function InterviewSessionPage() {
             </div>
 
             {/* Question Display */}
-            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 border-l-4 border-l-amber-600 rounded-xl p-6 overflow-hidden">
-              <div className="mb-5">
+            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 border-l-4 border-l-amber-600 rounded-xl p-4 overflow-hidden">
+              <div className="mb-3">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-700 text-white text-xs font-bold shrink-0">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-700 text-white text-xs font-bold shrink-0">
                     {questionProgress}
                   </span>
                   <h2 className="text-sm font-semibold text-amber-700 uppercase tracking-widest">
@@ -575,13 +575,13 @@ export default function InterviewSessionPage() {
                     </span>
                   </h2>
                 </div>
-                <p className="text-2xl font-semibold text-stone-800 leading-snug tracking-tight">
+                <p className="text-lg font-semibold text-stone-800 leading-snug tracking-tight">
                   {currentQuestion?.question}
                 </p>
               </div>
 
               {/* Question Metadata */}
-              <div className="flex gap-2 flex-wrap pt-4 border-t border-amber-700/10">
+              <div className="flex gap-2 flex-wrap pt-3 border-t border-amber-700/10">
                 <span className="px-3 py-1 bg-amber-100/80 text-amber-800 text-xs font-medium rounded-full border border-amber-300/40 capitalize">
                   {currentQuestion?.category}
                 </span>
@@ -599,13 +599,13 @@ export default function InterviewSessionPage() {
           </div>
 
           {/* Right Column: Timer and Navigation */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Timer */}
-            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-6">
+            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-4">
               <div className="text-center">
-                <Clock className="w-6 h-6 text-stone-500 mx-auto mb-2" />
-                <p className="text-stone-600 text-sm mb-3">Time Elapsed</p>
-                <div className="text-5xl font-bold text-black font-mono mb-4">
+                <Clock className="w-5 h-5 text-stone-500 mx-auto mb-1" />
+                <p className="text-stone-600 text-xs mb-2">Time Elapsed</p>
+                <div className="text-3xl font-bold text-black font-mono mb-3">
                   {Math.floor(elapsedTime / 60)}:{String(elapsedTime % 60).padStart(2, '0')}
                 </div>
 
@@ -620,8 +620,8 @@ export default function InterviewSessionPage() {
             </div>
 
             {/* Progress */}
-            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-6">
-              <h3 className="font-semibold text-black mb-4">Progress</h3>
+            <div className="bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl p-4">
+              <h3 className="font-semibold text-black mb-3 text-sm">Progress</h3>
 
               {/* Progress Bar */}
               <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden mb-3">
@@ -631,12 +631,12 @@ export default function InterviewSessionPage() {
                 ></div>
               </div>
 
-              <p className="text-stone-600 text-sm mb-4">
+              <p className="text-stone-600 text-xs mb-3">
                 {questionProgress} / {totalQuestions} questions completed
               </p>
 
               {/* Questions List */}
-              <div className="space-y-2 max-h-48 overflow-y-auto">
+              <div className="space-y-1.5 max-h-36 overflow-y-auto">
                 {currentSession.questions.map((q, idx) => {
                   const questionText = (q as any).question || (q as any).question_text || '';
                   return (
@@ -675,7 +675,7 @@ export default function InterviewSessionPage() {
 
             {/* Navigation Buttons */}
             {isInterviewStarted && (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {/* Skip Question Button */}
                 {questionProgress < totalQuestions && (
                   <Button onClick={handleNextQuestion} variant="outline" className="w-full">
@@ -709,118 +709,118 @@ export default function InterviewSessionPage() {
               </div>
             )}
           </div>
+        </div>
 
-          {/* Live Session Feed - Transcripts & Emotions */}
-          <div className="lg:col-span-3 mt-8 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl overflow-hidden border-t-2 border-t-emerald-400/50">
-            {/* Panel header */}
-            <div className="px-6 py-4 border-b border-amber-700/20 flex items-center justify-between bg-emerald-50/20">
-              <h3 className="font-semibold text-black flex items-center gap-2">
+        {/* Live Session Feed - Transcripts & Emotions (below the main grid) */}
+        <div className="mt-10 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl overflow-hidden border-t-2 border-t-emerald-400/50">
+          {/* Panel header */}
+          <div className="px-6 py-4 border-b border-amber-700/20 flex items-center justify-between bg-emerald-50/20">
+            <h3 className="font-semibold text-black flex items-center gap-2">
+              <span
+                className={`w-2 h-2 rounded-full flex-shrink-0 ${streamStatus.isRecording ? 'bg-emerald-500 animate-pulse' : 'bg-stone-300'}`}
+              ></span>
+              Live Session Feed
+            </h3>
+            <div className="flex items-center gap-3 text-xs text-stone-500">
+              <span className="flex items-center gap-1.5">
                 <span
-                  className={`w-2 h-2 rounded-full flex-shrink-0 ${streamStatus.isRecording ? 'bg-emerald-500 animate-pulse' : 'bg-stone-300'}`}
+                  className={`w-1.5 h-1.5 rounded-full inline-block ${streamStatus.chunksRecorded > 0 ? 'bg-emerald-500' : 'bg-stone-300'}`}
                 ></span>
-                Live Session Feed
-              </h3>
-              <div className="flex items-center gap-3 text-xs text-stone-500">
-                <span className="flex items-center gap-1.5">
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full inline-block ${streamStatus.chunksRecorded > 0 ? 'bg-emerald-500' : 'bg-stone-300'}`}
-                  ></span>
-                  {streamStatus.chunksRecorded} audio chunk
-                  {streamStatus.chunksRecorded !== 1 ? 's' : ''}
-                </span>
-                <span className="text-stone-300">·</span>
-                <span>
-                  {transcriptions.length} transcript{transcriptions.length !== 1 ? 's' : ''}
-                </span>
-                <span className="text-stone-300">·</span>
-                <span>
-                  {liveEmotions.length} emotion read{liveEmotions.length !== 1 ? 's' : ''}
-                </span>
-              </div>
+                {streamStatus.chunksRecorded} audio chunk
+                {streamStatus.chunksRecorded !== 1 ? 's' : ''}
+              </span>
+              <span className="text-stone-300">·</span>
+              <span>
+                {transcriptions.length} transcript{transcriptions.length !== 1 ? 's' : ''}
+              </span>
+              <span className="text-stone-300">·</span>
+              <span>
+                {liveEmotions.length} emotion read{liveEmotions.length !== 1 ? 's' : ''}
+              </span>
             </div>
+          </div>
 
-            <div className="grid grid-cols-5 divide-x divide-amber-700/10">
-              {/* Q&A Transcript Column */}
-              <div className="col-span-3 p-5">
-                <h4 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                  <span className="w-1 h-3 bg-emerald-500 rounded-full inline-block"></span>
-                  Transcripts
-                </h4>
-                <div className="space-y-4 max-h-72 overflow-y-auto pr-1">
-                  {Array.from(new Set(transcriptions.map((t) => t.questionNumber)))
-                    .sort((a, b) => a - b)
-                    .map((qNum) => {
-                      const rawQ = currentSession.questions[qNum - 1] as any;
-                      const qLabel = rawQ?.question || rawQ?.question_text || '';
-                      const qChunks = transcriptions.filter((t) => t.questionNumber === qNum);
-                      return (
-                        <div key={qNum}>
-                          <p className="text-xs font-semibold text-amber-700 mb-1.5">
-                            Q{qNum}
-                            {qLabel
-                              ? `: ${qLabel.slice(0, 70)}${qLabel.length > 70 ? '\u2026' : ''}`
-                              : ''}
-                          </p>
-                          <p className="text-sm text-stone-700 leading-relaxed bg-white/60 rounded-lg px-3 py-2 border border-amber-700/10">
-                            {qChunks.map((c) => c.text).join(' ')}
-                          </p>
-                        </div>
-                      );
-                    })}
-                  {transcriptions.length === 0 && (
-                    <p className="text-stone-400 text-sm italic">
-                      Transcriptions will appear here as you speak\u2026
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Live Emotion Column */}
-              <div className="col-span-2 p-5">
-                <h4 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                  <span className="w-1 h-3 bg-emerald-500 rounded-full inline-block"></span>
-                  Live Emotions
-                </h4>
-                <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
-                  {[...liveEmotions].reverse().map((e, i) => {
-                    const score =
-                      typeof e.score === 'number' ? e.score : parseFloat(String(e.score)) || 0;
-                    const pct = Math.min(100, Math.round(score * 100));
-                    const label = e.label.toLowerCase();
-                    const colorClass =
-                      label.includes('happy') || label.includes('joy')
-                        ? 'bg-green-50 text-green-700 border-green-200'
-                        : label.includes('sad') || label.includes('fear')
-                          ? 'bg-blue-50 text-blue-700 border-blue-200'
-                          : label.includes('angry') || label.includes('disgust')
-                            ? 'bg-red-50 text-red-700 border-red-200'
-                            : label.includes('surprise')
-                              ? 'bg-purple-50 text-purple-700 border-purple-200'
-                              : label.includes('neutral')
-                                ? 'bg-stone-50 text-stone-600 border-stone-200'
-                                : 'bg-amber-50 text-amber-700 border-amber-200';
+          <div className="grid grid-cols-5 divide-x divide-amber-700/10">
+            {/* Q&A Transcript Column */}
+            <div className="col-span-3 p-5">
+              <h4 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <span className="w-1 h-3 bg-emerald-500 rounded-full inline-block"></span>
+                Transcripts
+              </h4>
+              <div className="space-y-4 max-h-72 overflow-y-auto pr-1">
+                {Array.from(new Set(transcriptions.map((t) => t.questionNumber)))
+                  .sort((a, b) => a - b)
+                  .map((qNum) => {
+                    const rawQ = currentSession.questions[qNum - 1] as any;
+                    const qLabel = rawQ?.question || rawQ?.question_text || '';
+                    const qChunks = transcriptions.filter((t) => t.questionNumber === qNum);
                     return (
-                      <div
-                        key={i}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs ${colorClass}`}
-                      >
-                        <span className="font-semibold capitalize min-w-[72px]">{e.label}</span>
-                        <div className="flex-1 h-1.5 bg-black/10 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-current rounded-full transition-all duration-300"
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
-                        <span className="tabular-nums w-8 text-right">{pct}%</span>
+                      <div key={qNum}>
+                        <p className="text-xs font-semibold text-amber-700 mb-1.5">
+                          Q{qNum}
+                          {qLabel
+                            ? `: ${qLabel.slice(0, 70)}${qLabel.length > 70 ? '\u2026' : ''}`
+                            : ''}
+                        </p>
+                        <p className="text-sm text-stone-700 leading-relaxed bg-white/60 rounded-lg px-3 py-2 border border-amber-700/10">
+                          {qChunks.map((c) => c.text).join(' ')}
+                        </p>
                       </div>
                     );
                   })}
-                  {liveEmotions.length === 0 && (
-                    <p className="text-stone-400 text-sm italic">
-                      Emotion analysis will appear here\u2026
-                    </p>
-                  )}
-                </div>
+                {transcriptions.length === 0 && (
+                  <p className="text-stone-400 text-sm italic">
+                    Transcriptions will appear here as you speak\u2026
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Live Emotion Column */}
+            <div className="col-span-2 p-5">
+              <h4 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <span className="w-1 h-3 bg-emerald-500 rounded-full inline-block"></span>
+                Live Emotions
+              </h4>
+              <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
+                {[...liveEmotions].reverse().map((e, i) => {
+                  const score =
+                    typeof e.score === 'number' ? e.score : parseFloat(String(e.score)) || 0;
+                  const pct = Math.min(100, Math.round(score * 100));
+                  const label = e.label.toLowerCase();
+                  const colorClass =
+                    label.includes('happy') || label.includes('joy')
+                      ? 'bg-green-50 text-green-700 border-green-200'
+                      : label.includes('sad') || label.includes('fear')
+                        ? 'bg-blue-50 text-blue-700 border-blue-200'
+                        : label.includes('angry') || label.includes('disgust')
+                          ? 'bg-red-50 text-red-700 border-red-200'
+                          : label.includes('surprise')
+                            ? 'bg-purple-50 text-purple-700 border-purple-200'
+                            : label.includes('neutral')
+                              ? 'bg-stone-50 text-stone-600 border-stone-200'
+                              : 'bg-amber-50 text-amber-700 border-amber-200';
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs ${colorClass}`}
+                    >
+                      <span className="font-semibold capitalize min-w-[72px]">{e.label}</span>
+                      <div className="flex-1 h-1.5 bg-black/10 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-current rounded-full transition-all duration-300"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <span className="tabular-nums w-8 text-right">{pct}%</span>
+                    </div>
+                  );
+                })}
+                {liveEmotions.length === 0 && (
+                  <p className="text-stone-400 text-sm italic">
+                    Emotion analysis will appear here\u2026
+                  </p>
+                )}
               </div>
             </div>
           </div>
