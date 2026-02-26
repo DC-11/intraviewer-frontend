@@ -182,8 +182,8 @@ export default function DashboardPage() {
           </div>
 
           {/* Recent Sessions - Full Width */}
-          <div className="mt-10">
-            <h3 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-4">
+          <div className="mt-1 h-20" >
+            <h3 className="text-sm font-medium text-stone-500 uppercase tracking-wide mb-2">
               Recent Sessions
             </h3>
             
@@ -227,7 +227,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="bg-white/40 backdrop-blur-sm rounded-xl border border-amber-700/20 p-8 text-center">
-                <div className="w-12 h-12 bg-emerald-100/80 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-10 bg-emerald-100/80 rounded-full flex items-center justify-center mx-auto mb-4">
                   <PlayCircle className="w-6 h-6 text-emerald-600" />
                 </div>
                 <p className="text-stone-600 mb-1">No sessions yet</p>

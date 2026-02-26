@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 import { useInterviewStore } from '@/lib/stores/interviewStore';
 import { useMediaStream } from '@/lib/hooks/useMediaStream';
-import PreviousSessionsModal from '@/components/PreviousSessionsModal';
 
 /**
  * Interview Session Component
@@ -35,22 +34,16 @@ export default function InterviewSessionPage() {
   const {
     currentSession,
     backendSessionId,
-    previousSessions,
-    addResponse,
     completeInterview,
-    fetchPreviousSessions,
     clearCurrentSession,
-    interviewQuestions,
   } = useInterviewStore();
 
-  // State to control when to show previous sessions modal
-  const [showSessionsModal, setShowSessionsModal] = useState(false);
-  const [isLoadingSessions, setIsLoadingSessions] = useState(false);
+  // Hydration loading state - gives 2 seconds for components to initialize
+  const [isHydrating, setIsHydrating] = useState(true);
 
   // Media streaming hook (handles audio chunks + frame capture)
   // Only initialize with sessionId when we have a valid backend session
   const {
-    sessionId,
     status: streamStatus,
     startRecording: startMediaStream,
     stopRecording: stopMediaStream,
@@ -89,35 +82,33 @@ export default function InterviewSessionPage() {
 
   console.log('🚀 ~ InterviewSessionPage ~ currentSession:', currentSession, backendSessionId);
 
-  // Check if interview session exists and has backend session ID
+  // Hydration timer - show loading for 2 seconds to let components initialize
   useEffect(() => {
-    const validateSession = async () => {
-      // Validate session: exists, has backend ID, not completed, and has que.
-      const isValidSession =
-        currentSession &&
-        backendSessionId &&
-        currentSession.status !== 'completed' &&
-        currentSession.questions &&
-        currentSession.questions.length > 0;
+    const timer = setTimeout(() => {
+      setIsHydrating(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
-      if (isValidSession) {
-        // Valid session exists - hide modal and proceed
-        setShowSessionsModal(false);
-      } else {
-        // If session is invalid (e.g. completed or empty), clear it and show modal
-        if (currentSession || backendSessionId) {
-          clearCurrentSession();
-        }
+  // After hydration, validate session and redirect if invalid
+  useEffect(() => {
+    if (isHydrating) return; // Wait for hydration to complete
 
-        setIsLoadingSessions(true);
-        setShowSessionsModal(true);
-        await fetchPreviousSessions();
-        setIsLoadingSessions(false);
+    const isValidSession =
+      currentSession &&
+      backendSessionId &&
+      currentSession.status !== 'completed' &&
+      currentSession.questions &&
+      currentSession.questions.length > 0;
+
+    if (!isValidSession) {
+      // No valid session - clear any stale data and redirect to dashboard
+      if (currentSession || backendSessionId) {
+        clearCurrentSession();
       }
-    };
-
-    validateSession();
-  }, [currentSession, backendSessionId, fetchPreviousSessions, clearCurrentSession]);
+      router.replace('/dashboard');
+    }
+  }, [isHydrating, currentSession, backendSessionId, clearCurrentSession, router]);
 
   /**
    * Initialize media devices and start streaming
@@ -203,35 +194,6 @@ export default function InterviewSessionPage() {
   }, [currentSession, isInterviewStarted]); // Only reset when interview starts
 
   /**
-   * Save response metadata
-   * Actual audio/video already streaming to backend via WebSocket
-   */
-  const saveResponseMetadata = async () => {
-    try {
-      const duration = (Date.now() - responseStartTimeRef.current) / 1000;
-
-      // Save response metadata to interview session
-      await addResponse({
-        questionId: currentSession?.questions[currentQuestionIndex].id || '',
-        answer: 'Response recorded (streaming session: ' + sessionId + ')',
-        duration: Math.round(duration),
-        timestamp: new Date(),
-        audioBlob: undefined, // Streaming handled by WebSocket
-      });
-
-      console.log('✅ Response metadata saved for question:', currentQuestionIndex + 1);
-      console.log(
-        '📊 Chunks:',
-        streamStatus.chunksRecorded,
-        'Frames:',
-        streamStatus.framesRecorded
-      );
-    } catch (err: any) {
-      console.error('Error saving response:', err);
-    }
-  };
-
-  /**
    * Handle next question navigation
    */
   const handleNextQuestion = async () => {
@@ -259,7 +221,6 @@ export default function InterviewSessionPage() {
    */
   const [isCompleting, setIsCompleting] = useState(false);
 
-  // Inside handleCompleteInterview in page.tsx
   const handleCompleteInterview = async () => {
     if (isCompleting) return;
     setIsCompleting(true);
@@ -267,25 +228,26 @@ export default function InterviewSessionPage() {
     const sessionIdForRedirect = backendSessionId;
 
     try {
-      await saveResponseMetadata();
-
-      // 1. Tell the hook we are finishing (so it doesn't try to reconnect)
-      // 2. stopMediaStream() sends the 'session_complete' signal
+      // 1. Stop media streaming (sends 'session_complete' signal via WebSocket)
       stopMediaStream();
 
-      // 3. Give the backend 1 second to start the AI background tasks
-      // before we change the DB status via HTTP
+      // 2. Give the backend 1 second to start the AI background tasks
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // 4. Now tell the DB the session is officially over
+      // 3. Tell the DB the session is officially over
       await completeInterview();
 
+      // 4. Stop local media tracks
       if (localStream) {
         localStream.getTracks().forEach((track) => track.stop());
       }
 
       router.replace(`/interview/results/${sessionIdForRedirect}`);
     } catch (err: any) {
+      console.error('❌ Failed to complete interview:', err);
+      setSessionError(
+        err.message || 'Failed to complete the interview. Please try again.'
+      );
       setIsCompleting(false);
     }
   };
@@ -296,10 +258,29 @@ export default function InterviewSessionPage() {
   const handleStartInterview = async () => {
     if (!videoRef.current || !canvasRef.current) return;
 
+    // Guard: wait for the camera stream to be ready
+    if (!localStream) {
+      setSessionError('Camera is still loading. Please wait a moment and try again.');
+      return;
+    }
+
+    // Ensure the stream is attached to the video element
+    if (!videoRef.current.srcObject) {
+      videoRef.current.srcObject = localStream;
+      try {
+        await videoRef.current.play();
+      } catch (playError: any) {
+        if (playError.name !== 'AbortError') {
+          console.error('Video play error:', playError);
+        }
+      }
+    }
+
     try {
       await startMediaStream(videoRef.current, canvasRef.current);
       responseStartTimeRef.current = Date.now();
       setIsInterviewStarted(true);
+      setSessionError(null); // Clear any previous errors
       console.log('🚀 Interview session started - Backend Session ID:', backendSessionId);
     } catch (err: any) {
       setSessionError(err.message || 'Failed to start interview session');
@@ -339,39 +320,22 @@ export default function InterviewSessionPage() {
     }
   };
 
-  /**
-   * Handle create new session from modal
-   */
-  const handleCreateNewSession = () => {
-    clearCurrentSession();
-    router.push('/interview/prepare');
-  };
-
-  /**
-   * Handle close modal (go back to dashboard)
-   */
-  const handleCloseModal = () => {
-    router.push('/dashboard');
-  };
-
-  // Show sessions modal if no valid backend session
-  if (showSessionsModal || !currentSession || !backendSessionId) {
+  // Show loading screen while hydrating (2 seconds)
+  if (isHydrating || !currentSession || !backendSessionId) {
     return (
-      <>
-        <div className="min-h-screen bg-[#e1e1db] flex items-center justify-center">
-          {/* Background decorative elements */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-20 left-10 w-72 h-72 bg-amber-200/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 right-10 w-72 h-72 bg-amber-200/10 rounded-full blur-3xl"></div>
-          </div>
+      <div className="min-h-screen bg-[#e1e1db] flex flex-col items-center justify-center">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-amber-200/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-72 h-72 bg-amber-200/10 rounded-full blur-3xl"></div>
         </div>
 
-        {/* Previous Sessions Modal */}
-        <PreviousSessionsModal
-          onCreateNew={handleCreateNewSession}
-          onClose={handleCloseModal}
-        />
-      </>
+        <div className="relative text-center">
+          <div className="w-16 h-16 border-4 border-amber-700/20 border-t-amber-700 rounded-full animate-spin mx-auto mb-6"></div>
+          <h2 className="text-xl font-semibold text-stone-800 mb-2">Preparing your session</h2>
+          <p className="text-stone-500 text-sm">Setting up camera, microphone, and connection…</p>
+        </div>
+      </div>
     );
   }
 
@@ -454,7 +418,7 @@ export default function InterviewSessionPage() {
                 />
 
                 {/* Start Interview overlay */}
-                {!isInterviewStarted && !showSessionsModal && localStream && (
+                {!isInterviewStarted && localStream && (
                   <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center">
                     <div className="bg-white/10 p-4 rounded-xl backdrop-blur-md border border-white/20 text-center max-w-sm mx-4">
                       <div className="w-12 h-12 bg-amber-700 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -469,8 +433,9 @@ export default function InterviewSessionPage() {
                       </p>
                       <Button
                         onClick={handleStartInterview}
+                        disabled={!localStream}
                         size="lg"
-                        className="w-full bg-amber-700 text-white hover:bg-amber-800 font-medium"
+                        className="w-full bg-amber-700 text-white hover:bg-amber-800 font-medium disabled:opacity-50"
                       >
                         Start Interview Session
                       </Button>

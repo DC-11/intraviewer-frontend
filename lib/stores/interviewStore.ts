@@ -268,7 +268,7 @@ export const useInterviewStore = create<InterviewStore>()(
           return;
         }
 
-        // Update local state optimistically
+        // Update local state only - audio/video is already streamed via WebSocket
         set((state) => ({
           currentSession: state.currentSession
             ? {
@@ -277,18 +277,6 @@ export const useInterviewStore = create<InterviewStore>()(
               }
             : null,
         }));
-
-        // Send to backend
-        try {
-          await InterviewService.submitResponse(
-            state.currentSession.id,
-            response.questionId,
-            response.answer
-          );
-        } catch (err: any) {
-          console.error('Failed to save response:', err);
-          // Continue even if backend fails
-        }
       },
 
       completeInterview: async () => {
