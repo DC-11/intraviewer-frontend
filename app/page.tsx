@@ -43,7 +43,7 @@ if (typeof window !== 'undefined') {
 // IntraViewer feature cards
 const featuredInterviews = [
   {
-    name: 'AI Question Generation',
+    name: 'Personalised Question Generation',
     icon: Brain,
     bg: '#034732',
     description: 'Upload your CV and job description. Our local LLM generates 10 personalised questions — 3 Behavioural (Easy), 3 Technical (Medium), 4 Situational (Hard) — tailored specifically to your background.',
@@ -70,13 +70,13 @@ const featuredInterviews = [
     name: 'Private & Local AI',
     icon: Shield,
     bg: '#034732',
-    description: 'Whisper, Phi-3 Mini, and SmolVLM2 all run locally on the server. Your CV, audio, and video never leave your environment or touch an external API.',
+    description: 'Whisper, Phi-3 Mini, and E-model all run locally on the server. Your CV, audio, and video never leave your environment or touch an external API.',
   },
   {
-    name: 'Personalised Preparation',
+    name: 'Comprehensive Performance Report',
     icon: FileText,
     bg: '#034732',
-    description: 'No generic practice questions. Every session starts from your actual resume and the specific role you are targeting, making every question relevant from the first second.',
+    description: 'Content Quality, Communication, and Confidence, along with a visual emotion timeline and actionable feedback points.',
   },
 ];
 
@@ -731,19 +731,21 @@ export default function Home() {
                 Stop guessing. Start practicing. Upload your resume and get a fully personalized interview experience that adapts to your background. No more generic questions. Ever.
               </p>
               
-              <button className="group flex items-center gap-4 bg-amber-700 text-white px-6 py-4 rounded-xl hover:bg-amber-800 transition font-medium">
+              <button className="group flex items-center gap-4 bg-green-900 text-white px-6 py-4 rounded-sm hover:bg-amber-800 transition font-serif font-semibold">
+              <Link href="/dashboard" className="group flex items-center gap-4 ">
                 <Sparkles className="w-5 h-5 text-white" />
                 Try it Now
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                </Link>
               </button>
             </div>
             
             <div className="relative flex items-center justify-center">
               <Image
-                src="/interview-2.png"
+                src="/interface.png"
                 alt="Resume Interview Practice"
-                width={400}
-                height={400}
+                width={500}
+                height={200}
                 className="rounded-xl"
               />
             </div>
@@ -803,20 +805,15 @@ export default function Home() {
             
             <div className="relative flex items-center justify-center">
               {/* Document-style illustration */}
-              <div className="relative">
-                <div className="absolute inset-0 bg-amber-200/20 blur-[80px] rounded-full"></div>
-                <div className="relative w-80 h-80 border border-amber-700/20 rounded-xl bg-white/40 backdrop-blur-sm p-6">
-                  <div className="space-y-3">
-                    <div className="h-3 bg-amber-700/30 rounded w-3/4"></div>
-                    <div className="h-3 bg-amber-700/20 rounded w-full"></div>
-                    <div className="h-3 bg-amber-700/20 rounded w-5/6"></div>
-                    <div className="h-8 mt-6"></div>
-                    <div className="h-3 bg-amber-700/25 rounded w-2/3"></div>
-                    <div className="h-3 bg-amber-700/20 rounded w-full"></div>
-                    <div className="h-3 bg-amber-700/20 rounded w-4/5"></div>
-                  </div>
-                </div>
-              </div>
+               <div className="relative flex items-center justify-center">
+              <Image
+                src="/result.png"
+                alt="Voice Interview Practice"
+                width={350}
+                height={350}
+                className="rounded-xl"
+              />
+            </div>
             </div>
           </div>
         </div>
@@ -883,17 +880,13 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/auth/signup">
-              <Button size="lg" className="bg-amber-700 text-white hover:bg-amber-800 text-lg px-8 py-6">
+            <Link href="/dashboard">
+              <Button size="lg" className="bg-[#034732] text-white hover:bg-[#034732]/80 text-lg px-8 py-6">
                 Start Practicing Free
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
-            <Link href="/auth/login">
-              <Button size="lg" variant="outline" className="border-amber-700/30 text-black hover:bg-white/60 text-lg px-8 py-6">
-                Sign In
-              </Button>
-            </Link>
+            
           </div>
         </div>
       </section>
@@ -915,7 +908,7 @@ export default function Home() {
             <div>
               <h3 className="text-black font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-black text-sm">
-                <li><Link href="/auth/signup" className="hover:text-amber-700 transition">Interview Practice</Link></li>
+                <li><Link href="/dashboard" className="hover:text-amber-700 transition">Interview Practice</Link></li>
                 <li><Link href="#" className="hover:text-amber-700 transition">AI Feedback</Link></li>
                 <li><Link href="#" className="hover:text-amber-700 transition">Pricing</Link></li>
               </ul>
