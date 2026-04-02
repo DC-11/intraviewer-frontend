@@ -5,8 +5,8 @@
 ---
 
 ![intraviewer-3](public/intraviewer-3.gif)
-<img src="public/Picture2.png" style="width:500px; height:400px; object-fit:contain;">
-<img src="public/interface.png" style="width:500px; height:400px; object-fit:contain;">
+<img src="public/Picture2.png" style="width:300px; height:300px; object-fit:contain;">
+<img src="public/interface.png" style="width:300px; height:300px; object-fit:contain;">
 
 
 ---
