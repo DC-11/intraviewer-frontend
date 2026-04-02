@@ -1,13 +1,13 @@
-# IntraViewer — AI-Powered Interview Preparation Platform
+# IntraViewer: Real Time Mock Interview System
 
-> A full-stack platform that simulates realistic mock interviews, generates personalised AI questions from your CV and job description, transcribes your answers in real time, and analyses your emotions — all without sending your data to external APIs.
+**`> A full-stack platform that simulates realistic mock interviews, generates personalised AI questions from your CV and job description, transcribes your answers in real time, and analyses your emotions — all without sending your data to external APIs.`**
 
 ---
 
-![Picture1](public/Picture1.png)
-![Picture2](public/Picture2.png)
-![image](public/image.png)
 ![intraviewer-3](public/intraviewer-3.gif)
+<img src="public/Picture2.png" style="width:500px; height:400px; object-fit:contain;">
+<img src="public/interface.png" style="width:500px; height:400px; object-fit:contain;">
+
 
 ---
 
