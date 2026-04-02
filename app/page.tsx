@@ -1,6 +1,6 @@
 /**
  * IntraViewer - Landing Page
- * 
+ *
  * Modern dark theme landing page inspired by Code Wiki
  * Features hero section, 3D cube, featured sections, and glassmorphism effects.
  */
@@ -10,8 +10,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { 
-  ArrowRight, 
+import {
+  ArrowRight,
   Search,
   Brain,
   MessageSquare,
@@ -46,61 +46,64 @@ const featuredInterviews = [
     name: 'Personalised Question Generation',
     icon: Brain,
     bg: '#034732',
-    description: 'Upload your CV and job description. Our local LLM generates 10 personalised questions — 3 Behavioural (Easy), 3 Technical (Medium), 4 Situational (Hard) — tailored specifically to your background.',
+    description:
+      'Upload your CV and job description. Our local LLM generates 10 personalised questions — 3 Behavioural (Easy), 3 Technical (Medium), 4 Situational (Hard) — tailored specifically to your background.',
   },
   {
     name: 'Live Audio Transcription',
     icon: Mic,
     bg: '#034732',
-    description: 'Every word you speak is transcribed in real time using Faster-Whisper ASR. Review your exact answers after each session to spot patterns and improve clarity.',
+    description:
+      'Every word you speak is transcribed in real time using Faster-Whisper ASR. Review your exact answers after each session to spot patterns and improve clarity.',
   },
   {
     name: 'Emotion & Composure Detection',
     icon: Eye,
     bg: '#034732',
-    description: 'Computer vision analyses your video feed frame-by-frame during the session, detecting emotions and body language so you can build confidence under pressure.',
+    description:
+      'Computer vision analyses your video feed frame-by-frame during the session, detecting emotions and body language so you can build confidence under pressure.',
   },
   {
     name: 'Instant Session Results',
     icon: BarChart3,
     bg: '#034732',
-    description: 'The moment your interview ends, full results appear — transcripts, AI scores, emotion analysis, and model answers — all on a single dashboard.',
+    description:
+      'The moment your interview ends, full results appear — transcripts, AI scores, emotion analysis, and model answers — all on a single dashboard.',
   },
   {
     name: 'Private & Local AI',
     icon: Shield,
     bg: '#034732',
-    description: 'Whisper, Phi-3 Mini, and E-model all run locally on the server. Your CV, audio, and video never leave your environment or touch an external API.',
+    description:
+      'Whisper, Phi-3 Mini, and E-model all run locally on the server. Your CV, audio, and video never leave your environment or touch an external API.',
   },
   {
     name: 'Comprehensive Performance Report',
     icon: FileText,
     bg: '#034732',
-    description: 'Content Quality, Communication, and Confidence, along with a visual emotion timeline and actionable feedback points.',
+    description:
+      'Content Quality, Communication, and Confidence, along with a visual emotion timeline and actionable feedback points.',
   },
 ];
 
 // Fan carousel card data
 const fanCards = [
-  { src: '/questions.webp',       label: 'Personalised Questions',    alt: 'Login screen' },
-  { src: '/registration.jpg',       label: 'Secure Registration',    alt: 'Login screen' },
-  { src: '/local.jpg',      label: 'Private & Local AI',     alt: 'Sign up screen' },
-  { src: '/interview-3.png', label: 'Analysis & Feedback',      alt: 'AI feedback' },
-  { src: '/emotion.png', label: 'Emotion Analyis',    alt: 'Mock interview' },
-  { src: '/speechtotext.png', label: 'speech To Text',    alt: 'Mock interview' },
-  { src: '/interview-1.png', label: 'Voice Practice',   alt: 'Voice practice' },
-  { src: '/interview-2.png', label: 'Mock Sessions',    alt: 'Mock interview' },
-    { src: '/questions.webp',       label: 'Personalised Questions',    alt: 'Login screen' },
-  { src: '/registration.jpg',       label: 'Secure Registration',    alt: 'Login screen' },
-  { src: '/local.jpg',      label: 'Private & Local AI',     alt: 'Sign up screen' },
-  { src: '/interview-3.png', label: 'Analysis & Feedback',      alt: 'AI feedback' },
-  { src: '/emotion.png', label: 'Emotion Analyis',    alt: 'Mock interview' },
-  { src: '/speechtotext.png', label: 'speech To Text',    alt: 'Mock interview' },
-  { src: '/interview-1.png', label: 'Voice Practice',   alt: 'Voice practice' },
-  { src: '/interview-2.png', label: 'Mock Sessions',    alt: 'Mock interview' },
-
-
-
+  { src: '/questions.webp', label: 'Personalised Questions', alt: 'Login screen' },
+  { src: '/registration.jpg', label: 'Secure Registration', alt: 'Login screen' },
+  { src: '/local.jpg', label: 'Private & Local AI', alt: 'Sign up screen' },
+  { src: '/interview-3.png', label: 'Analysis & Feedback', alt: 'AI feedback' },
+  { src: '/emotion.png', label: 'Emotion Analyis', alt: 'Mock interview' },
+  { src: '/speechtotext.png', label: 'speech To Text', alt: 'Mock interview' },
+  { src: '/interview-1.png', label: 'Voice Practice', alt: 'Voice practice' },
+  { src: '/interview-2.png', label: 'Mock Sessions', alt: 'Mock interview' },
+  { src: '/questions.webp', label: 'Personalised Questions', alt: 'Login screen' },
+  { src: '/registration.jpg', label: 'Secure Registration', alt: 'Login screen' },
+  { src: '/local.jpg', label: 'Private & Local AI', alt: 'Sign up screen' },
+  { src: '/interview-3.png', label: 'Analysis & Feedback', alt: 'AI feedback' },
+  { src: '/emotion.png', label: 'Emotion Analyis', alt: 'Mock interview' },
+  { src: '/speechtotext.png', label: 'speech To Text', alt: 'Mock interview' },
+  { src: '/interview-1.png', label: 'Voice Practice', alt: 'Voice practice' },
+  { src: '/interview-2.png', label: 'Mock Sessions', alt: 'Mock interview' },
 ];
 
 // Orbit radius — larger = wider, gentler arc
@@ -117,7 +120,9 @@ export default function Home() {
 
   // Tip state
   const { accessToken } = useAuthStore();
-  const [tip, setTip] = useState<{ topic: string; tip_number: string; tip_text: string } | null>(null);
+  const [tip, setTip] = useState<{ topic: string; tip_number: string; tip_text: string } | null>(
+    null
+  );
   const [tipLoading, setTipLoading] = useState(false);
   const [tipError, setTipError] = useState<string | null>(null);
   const [tipShine, setTipShine] = useState(false);
@@ -128,7 +133,10 @@ export default function Home() {
     try {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
-      const res = await fetch(`${API_CONFIG.BASE_URL}/tips/random`, { headers, credentials: 'include' });
+      const res = await fetch(`${API_CONFIG.BASE_URL}/tips/random`, {
+        headers,
+        credentials: 'include',
+      });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ detail: 'Failed to fetch tip' }));
         throw new Error(err.detail || `Error ${res.status}`);
@@ -200,8 +208,6 @@ export default function Home() {
   const talkSectionRef = useRef<HTMLElement>(null);
   const ctaSectionRef = useRef<HTMLDivElement>(null);
 
-
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100);
@@ -215,14 +221,10 @@ export default function Home() {
     const ctx = gsap.context(() => {
       // Hero section entrance animation - split title
       const heroTimeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      
+
       heroTimeline
         // Left title slides in from left
-        .fromTo(
-          titleLeftRef.current,
-          { opacity: 0, x: -80 },
-          { opacity: 1, x: 0, duration: 0.8 }
-        )
+        .fromTo(titleLeftRef.current, { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.8 })
         // Right title slides in from right
         .fromTo(
           titleRightRef.current,
@@ -251,7 +253,7 @@ export default function Home() {
           { opacity: 1, y: 0, scale: 1, duration: 0.7 },
           '-=0.4'
         );
-      
+
       // Continuous icon rotation animation
       gsap.to(titleIconRef.current, {
         rotation: 360,
@@ -259,8 +261,6 @@ export default function Home() {
         repeat: -1,
         ease: 'none',
       });
-
-
 
       // Ferris-wheel orbit: fade cards in immediately, then spin forever
       if (fanCarouselRef.current && fanRingRef.current && fanCardEls.current.length) {
@@ -398,7 +398,6 @@ export default function Home() {
           }
         );
       }
-      
 
       // CTA section animation
       if (ctaSectionRef.current) {
@@ -425,25 +424,41 @@ export default function Home() {
   }, []);
 
   // Unique images used by the fan carousel (5 uniques, repeated 3×)
-  const uniqueCarouselSrcs = ['/login.png', '/interview-2.png', '/interview-3.png', '/interview-1.png', '/signup.png'];
+  const uniqueCarouselSrcs = [
+    '/login.png',
+    '/interview-2.png',
+    '/interview-3.png',
+    '/interview-1.png',
+    '/signup.png',
+  ];
 
   return (
-    <div  className=" px-2 py-5 rounded-4xl  min-h-screen bg-[#e1e1db] text-black overflow-hidden">
-
+    <div className=" px-2 py-5 rounded-4xl  min-h-screen bg-[#e1e1db] text-black overflow-hidden ">
       {/* ── Carousel image preloader ─────────────────────────────────────────────
            Renders all 5 unique images off-screen with priority=true so Next.js
            injects <link rel="preload"> tags in <head> and sets loading="eager".
            By the time GSAP fades the carousel in they are already in the cache.
       ─────────────────────────────────────────────────────────────────────── */}
-      <div aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          width: 0,
+          height: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        }}
+      >
         {uniqueCarouselSrcs.map((src) => (
           <Image key={src} src={src} alt="" width={240} height={240} priority />
         ))}
       </div>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative bg-[#053828] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-30 rounded-sm pb-0">
-
+      <section
+        ref={heroRef}
+        className="relative bg-[#053828] min-h-[50vh] flex flex-col items-center justify-center px-0 pt-30 rounded-sm pb-0"
+      >
         {/* Background gradient 
         <div className="absolute inset-0 bg-gradient-to-b from-amber-100/30 via-transparent to-transparent pointer-events-none"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-200/20 rounded-full blur-[120px] pointer-events-none"></div>
@@ -451,29 +466,31 @@ export default function Home() {
 
         <div className="relative z-10 text-center max-w-5xl mx-auto px-4 text-white">
           {/* Split Title */}
-          <div ref={heroTitleRef} className="flex flex-row items-center justify-center gap-3 md:gap-6 mb-8 flex-wrap">
-            <span 
+          <div
+            ref={heroTitleRef}
+            className="flex flex-row items-center justify-center gap-3 md:gap-6 mb-8 flex-wrap"
+          >
+            <span
               ref={titleLeftRef}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif tracking-tight leading-none opacity-0"
             >
               IntraViewer
             </span>
-            <span 
+            <span
               ref={titleIconRef}
               className="text-3xl sm:text-4xl md:text-5xl text-amber-500 opacity-0 rotate-0 leading-none font-bold"
             >
               ✦
             </span>
-            <span 
+            <span
               ref={titleRightRef}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif tracking-tight leading-none opacity-0"
             >
               View To Self
             </span>
           </div>
-          
-       
-         {/* Tip card — in hero */}
+
+          {/* Tip card — in hero */}
           <style>{`
             @keyframes shine-border {
               0%   { border-color: rgba(217,169,56,0.15); box-shadow: 0 0 0 0 rgba(217,169,56,0); }
@@ -494,8 +511,12 @@ export default function Home() {
               focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50
               ${tipShine ? 'tip-shine' : ''}
             `}
-            style={{ width: tip?.tip_text ? `min(${Math.min(42, 18 + tip.tip_text.length * 0.35)}rem, 90vw)` : '280px' }}
-            >
+            style={{
+              width: tip?.tip_text
+                ? `min(${Math.min(42, 18 + tip.tip_text.length * 0.35)}rem, 90vw)`
+                : '280px',
+            }}
+          >
             {/* Topic badge + refresh hint */}
             <div className="flex items-center justify-between mb-2">
               <span className="flex items-center gap-1.5 text-[10px] font-medium tracking-wide uppercase text-amber-400/80">
@@ -509,52 +530,58 @@ export default function Home() {
             </div>
 
             {/* Tip text with GSAP animation ref */}
-            <div ref={tipTextRef} className="flex items-center justify-center flex-1 overflow-hidden">
+            <div
+              ref={tipTextRef}
+              className="flex items-center justify-center flex-1 overflow-hidden"
+            >
               {tipLoading ? (
                 <div className="flex items-center justify-center py-2">
                   <div className="w-5 h-5 rounded-full border-2 border-amber-500/20 border-t-amber-400 animate-spin" />
                 </div>
               ) : (
                 <p className="text-center text-sm md:text-base font-serif text-white/80 leading-relaxed line-clamp-3">
-                  {tipError
-                    ? tipError
-                    : tip?.tip_text
-                      ? `"${tip.tip_text}"`
-                      : (
-                      <>
-                          The secret of getting ahead is getting started
-                          Get started with IntraViewer
-                          </>
-                        
-                      )
-                  }
+                  {tipError ? (
+                    tipError
+                  ) : tip?.tip_text ? (
+                    `"${tip.tip_text}"`
+                  ) : (
+                    <>The secret of getting ahead is getting started Get started with IntraViewer</>
+                  )}
                 </p>
               )}
             </div>
           </button>
 
           {/* Search Bar */}
-         
         </div>
-         {/* Center Section - Dashboard Button */}
-                    <div className="hidden md:flex flex-1 justify-center mx-8">
-                        <Link href="/dashboard">
-                            <Button
-                                variant="ghost"
-                                className="group relative   rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-50/60 via-yellow-50/20 to-amber-50/60 hover:from-amber-100/80 hover:via-yellow-100/80 hover:to-amber-100/80 shadow-[0_0_12px_rgba(217,169,56,0.15)] hover:shadow-[0_0_20px_rgba(217,169,56,0.3)] transition-all duration-300"
-                            >
-                                <span className="text-white font-serif mx-0 my-0 tracking-wide group-hover:text-green-800 transition-colors duration-300">TRY NOW </span>
-                                <span className="ml-2 inline-flex items-center text-emerald-600 group-hover:translate-x-1.5 transition-transform duration-300">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M5 12h14" />
-                                        <path d="m12 5 7 7-7 7" />
-                                    </svg>
-                                </span>
-                            </Button>
-                        </Link>
-                    </div> 
-
-
+        {/* Center Section - Dashboard Button */}
+        <div className="hidden md:flex flex-1 justify-center mx-8">
+          <Link href="/dashboard">
+            <Button
+              variant="ghost"
+              className="group relative   rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-50/60 via-yellow-50/20 to-amber-50/60 hover:from-amber-100/80 hover:via-yellow-100/80 hover:to-amber-100/80 shadow-[0_0_12px_rgba(217,169,56,0.15)] hover:shadow-[0_0_20px_rgba(217,169,56,0.3)] transition-all duration-300"
+            >
+              <span className="text-white font-serif mx-0 my-0 tracking-wide group-hover:text-green-800 transition-colors duration-300">
+                TRY NOW{' '}
+              </span>
+              <span className="ml-2 inline-flex items-center text-emerald-600 group-hover:translate-x-1.5 transition-transform duration-300">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </span>
+            </Button>
+          </Link>
+        </div>
 
         {/* Scroll indicator 
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
@@ -564,7 +591,6 @@ export default function Home() {
         </div>
          */}
       </section>
-     
 
       {/* Ferris-Wheel Card Carousel
           Layout:
@@ -583,18 +609,22 @@ export default function Home() {
         {/* Introduction text — sits inside the hollow of the arc */}
         <div
           className="absolute inset-x-0 pointer-events-none z-10 flex flex-col items-center justify-end px-6"
-          style={{ top: 0, bottom: 80 }}>
-          <p ref={heroSubtitleRef} className="text-center text-base md:text-lg font-serif text-white/80 max-w-2xl leading-snug opacity-0">
+          style={{ top: 0, bottom: 80 }}
+        >
+          <p
+            ref={heroSubtitleRef}
+            className="text-center text-base md:text-lg font-serif text-white/80 max-w-2xl leading-snug opacity-0"
+          >
             Platform packed with{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md">AI-powered</span>
-            {' '}&{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md">personalized</span>
-            {' '}practice,
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md">AI-powered</span> &{' '}
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md">personalized</span>{' '}
+            practice,
             <br className="hidden md:block" />
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md mt-2">feedback</span>
-            ,{' '}
-            <span className="inline-block px-3 py-1 bg-black/5 rounded-md mt-2">analytics</span>
-            {' '}and interview{' '}
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md mt-2">
+              feedback
+            </span>,{' '}
+            <span className="inline-block px-3 py-1 bg-black/5 rounded-md mt-2">analytics</span> and
+            interview{' '}
             <span className="inline-block px-3 py-1 bg-black/5 rounded-md mt-2">mastery</span>
           </p>
         </div>
@@ -622,7 +652,9 @@ export default function Home() {
               }}
             >
               <div
-                ref={(el) => { if (el) fanCardEls.current[i] = el; }}
+                ref={(el) => {
+                  if (el) fanCardEls.current[i] = el;
+                }}
                 className="cursor-pointer select-none"
                 style={{ willChange: 'opacity' }}
               >
@@ -640,7 +672,10 @@ export default function Home() {
                       loading="eager"
                     />
                   </div>
-                  <div className="px-4 py-2.5 border-t border-white/10" style={{ background: '#1a1a1a' }}>
+                  <div
+                    className="px-4 py-2.5 border-t border-white/10"
+                    style={{ background: '#1a1a1a' }}
+                  >
                     <p className="text-white text-sm font-medium">{card.label}</p>
                   </div>
                 </div>
@@ -661,16 +696,18 @@ export default function Home() {
       <section ref={featuredSectionRef} className="relative ">
         {/* Sticky title pinned at top */}
         <div className="sticky top-0 z-20 pt-10 pb-5 text-center bg-gradient-to-b from-[#e1e1db] via-[#e1e1db]/95 to-transparent px-4">
-          <h2 className="text-4xl md:text-5xl font-serif text-black inline-block mx-auto">Everything you get</h2>
+          <h2 className="text-4xl md:text-5xl font-serif text-black inline-block mx-auto">
+            Everything you get
+          </h2>
         </div>
 
         {/* Stacking cards — each card-track creates scroll height; card-sticky pins + stacks */}
         <div ref={featuredCardsRef} className="relative scale-[0.9] ">
           {featuredInterviews.map((interview, idx) => {
-            const tilts    = ['-5deg', '4.5deg', '-4deg', '5.5deg', '-4.5deg', '3.5deg'];
-            const offsetXs = ['-5%',   '5%',    '-4%',   '6%',     '-4%',     '4%'   ];
-            const tilt     = tilts[idx]    ?? (idx % 2 === 0 ? '-4deg' : '4deg');
-            const offsetX  = offsetXs[idx] ?? (idx % 2 === 0 ? '-4%'  : '4%'  );
+            const tilts = ['-5deg', '4.5deg', '-4deg', '5.5deg', '-4.5deg', '3.5deg'];
+            const offsetXs = ['-5%', '5%', '-4%', '6%', '-4%', '4%'];
+            const tilt = tilts[idx] ?? (idx % 2 === 0 ? '-4deg' : '4deg');
+            const offsetX = offsetXs[idx] ?? (idx % 2 === 0 ? '-4%' : '4%');
             return (
               /* card-track: takes up real scroll height so GSAP trigger fires for each card */
               <div key={idx} className="card-track" style={{ height: '28vh', minHeight: '150px' }}>
@@ -683,7 +720,7 @@ export default function Home() {
                     maxWidth: '680px',
                     margin: '0 auto',
                     transform: `rotate(${tilt}) translateX(${offsetX})`,
-                    opacity: 0, /* GSAP will reveal */
+                    opacity: 0 /* GSAP will reveal */,
                   }}
                 >
                   <Link
@@ -697,9 +734,7 @@ export default function Home() {
                     </div>
                     {/* Content on the right */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-2xl font-semibold text-white mb-3">
-                        {interview.name}
-                      </h3>
+                      <h3 className="text-2xl font-semibold text-white mb-3">{interview.name}</h3>
                       <p className="text-white/80 text-sm leading-relaxed">
                         {interview.description}
                       </p>
@@ -726,20 +761,22 @@ export default function Home() {
               <span className="inline-block px-4 py-1 bg-amber-100/70 rounded-full text-sm text-amber-700 mb-6">
                 Available
               </span>
-              
+
               <p className="text-black text-lg mb-8 leading-relaxed">
-                Stop guessing. Start practicing. Upload your resume and get a fully personalized interview experience that adapts to your background. No more generic questions. Ever.
+                Stop guessing. Start practicing. Upload your resume and get a fully personalized
+                interview experience that adapts to your background. No more generic questions.
+                Ever.
               </p>
-              
+
               <button className="group flex items-center gap-4 bg-green-900 text-white px-6 py-4 rounded-sm hover:bg-amber-800 transition font-serif font-semibold">
-              <Link href="/dashboard" className="group flex items-center gap-4 ">
-                <Sparkles className="w-5 h-5 text-white" />
-                Try it Now
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                <Link href="/dashboard" className="group flex items-center gap-4 ">
+                  <Sparkles className="w-5 h-5 text-white" />
+                  Try it Now
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                 </Link>
               </button>
             </div>
-            
+
             <div className="relative flex items-center justify-center">
               <Image
                 src="/interface.png"
@@ -754,7 +791,7 @@ export default function Home() {
       </section>
 
       {/* Read Your Interview Section */}
-      <section ref={aceSectionRef} className="py-20 px-30">
+      <section ref={aceSectionRef} className="py-20 px-30 ">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -763,57 +800,65 @@ export default function Home() {
                 <br />
                 on the first try
               </h2>
-              
+
               <p className="text-black text-lg mb-10">
                 Interview preparation that works for you, not the other way around.
               </p>
-              
+
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <div className="p-3 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl w-fit mb-4">
                     <Grid3X3 className="w-6 h-6 text-amber-700" />
                   </div>
                   <h3 className="font-semibold text-black mb-2">Practice question by question</h3>
-                  <p className="text-black text-sm">Focus on questions you need most. Pick a category and dive deeper.</p>
+                  <p className="text-black text-sm">
+                    Focus on questions you need most. Pick a category and dive deeper.
+                  </p>
                 </div>
-                
+
                 <div>
                   <div className="p-3 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl w-fit mb-4">
                     <Zap className="w-6 h-6 text-amber-700" />
                   </div>
                   <h3 className="font-semibold text-black mb-2">AI-powered feedback</h3>
-                  <p className="text-black text-sm">Get instant, actionable insights to improve your responses.</p>
+                  <p className="text-black text-sm">
+                    Get instant, actionable insights to improve your responses.
+                  </p>
                 </div>
-                
+
                 <div>
                   <div className="p-3 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl w-fit mb-4">
                     <RefreshCw className="w-6 h-6 text-amber-700" />
                   </div>
                   <h3 className="font-semibold text-black mb-2">Unlimited retries</h3>
-                  <p className="text-black text-sm">Practice as many times as you need until you&apos;re confident.</p>
+                  <p className="text-black text-sm">
+                    Practice as many times as you need until you&apos;re confident.
+                  </p>
                 </div>
-                
+
                 <div>
                   <div className="p-3 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl w-fit mb-4">
                     <Code className="w-6 h-6 text-amber-700" />
                   </div>
                   <h3 className="font-semibold text-black mb-2">Role-specific questions</h3>
-                  <p className="text-black text-sm">Questions tailored to your target role and experience level.</p>
+                  <p className="text-black text-sm">
+                    Questions tailored to your target role and experience level.
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="relative flex items-center justify-center">
               {/* Document-style illustration */}
-               <div className="relative flex items-center justify-center">
-              <Image
-                src="/result.png"
-                alt="Voice Interview Practice"
-                width={350}
-                height={350}
-                className="rounded-xl"
-              />
-            </div>
+              <div className="relative flex items-center justify-center">
+                <Image
+                  src="/result.png"
+                  alt="Voice Interview Practice"
+                  width={350}
+                  height={350}
+                  className="rounded-xl"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -824,14 +869,14 @@ export default function Home() {
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Talk through your answers
-              </h2>
-              
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">Talk through your answers</h2>
+
               <p className="text-black text-lg mb-10">
-                Practice answering out loud, get real-time transcription, and receive detailed feedback on your communication. It&apos;s like having an interview coach on call, 24/7.
+                Practice answering out loud, get real-time transcription, and receive detailed
+                feedback on your communication. It&apos;s like having an interview coach on call,
+                24/7.
               </p>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl">
@@ -839,14 +884,14 @@ export default function Home() {
                   </div>
                   <span className="text-black">Practice with voice recording</span>
                 </div>
-                
+
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl">
                     <Search className="w-5 h-5 text-amber-700" />
                   </div>
                   <span className="text-black">Get instant feedback analysis</span>
                 </div>
-                
+
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-white/40 backdrop-blur-sm border border-amber-700/20 rounded-xl">
                     <Zap className="w-5 h-5 text-amber-700" />
@@ -855,7 +900,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
+
             <div className="relative flex items-center justify-center">
               <Image
                 src="/interview-1.png"
@@ -872,21 +917,21 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-32 px-30">
         <div ref={ctaSectionRef} className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Ready to ace your next interview?
-          </h2>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6">Ready to ace your next interview?</h2>
           <p className="text-xl text-black mb-12">
             Join thousands of job seekers who landed their dream jobs with IntraViewer.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/dashboard">
-              <Button size="lg" className="bg-[#034732] text-white hover:bg-[#034732]/80 text-lg px-8 py-6">
+              <Button
+                size="lg"
+                className="bg-[#034732] text-white hover:bg-[#034732]/80 text-lg px-8 py-6"
+              >
                 Start Practicing Free
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
-            
           </div>
         </div>
       </section>
@@ -904,42 +949,80 @@ export default function Home() {
                 AI-powered interview preparation for the modern job seeker.
               </p>
             </div>
-            
+
             <div>
               <h3 className="text-black font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-black text-sm">
-                <li><Link href="/dashboard" className="hover:text-amber-700 transition">Interview Practice</Link></li>
-                <li><Link href="#" className="hover:text-amber-700 transition">AI Feedback</Link></li>
-                <li><Link href="#" className="hover:text-amber-700 transition">Pricing</Link></li>
+                <li>
+                  <Link href="/dashboard" className="hover:text-amber-700 transition">
+                    Interview Practice
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-amber-700 transition">
+                    AI Feedback
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-amber-700 transition">
+                    Pricing
+                  </Link>
+                </li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="text-black font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-black text-sm">
-                <li><Link href="#" className="hover:text-amber-700 transition">Blog</Link></li>
-                <li><Link href="#" className="hover:text-amber-700 transition">Guides</Link></li>
-                <li><Link href="#" className="hover:text-amber-700 transition">Help Center</Link></li>
+                <li>
+                  <Link href="#" className="hover:text-amber-700 transition">
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-amber-700 transition">
+                    Guides
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-amber-700 transition">
+                    Help Center
+                  </Link>
+                </li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="text-black font-semibold mb-4">Company</h3>
               <ul className="space-y-2 text-black text-sm">
-                <li><Link href="#" className="hover:text-amber-700 transition">About</Link></li>
-                <li><Link href="#" className="hover:text-amber-700 transition">Careers</Link></li>
-                <li><Link href="#" className="hover:text-amber-700 transition">Contact</Link></li>
+                <li>
+                  <Link href="#" className="hover:text-amber-700 transition">
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-amber-700 transition">
+                    Careers
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-amber-700 transition">
+                    Contact
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-amber-700/20 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-black text-sm">
-              © 2026 IntraViewer. All rights reserved.
-            </p>
+            <p className="text-black text-sm">© 2026 IntraViewer. All rights reserved.</p>
             <div className="flex gap-6 mt-4 md:mt-0">
-              <Link href="#" className="text-black hover:text-amber-700 transition text-sm">Privacy</Link>
-              <Link href="#" className="text-black hover:text-amber-700 transition text-sm">Terms</Link>
+              <Link href="#" className="text-black hover:text-amber-700 transition text-sm">
+                Privacy
+              </Link>
+              <Link href="#" className="text-black hover:text-amber-700 transition text-sm">
+                Terms
+              </Link>
             </div>
           </div>
         </div>
